@@ -30,6 +30,7 @@ class ViewController: UIViewController {
         for button in buttons {
             button.layer.borderWidth = 1
             button.layer.borderColor = UIColor.lightGray.cgColor
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Score", style: .plain, target: self, action: #selector(scoreTapped))
         }
         askQuestion()
     }
@@ -42,6 +43,7 @@ class ViewController: UIViewController {
             button.setImage(UIImage(named: countries[i]), for: .normal)
         }
     }
+    
     @IBAction func buttonTapped(_ sender: UIButton) {
         var title: String
         var message: String
@@ -64,6 +66,13 @@ class ViewController: UIViewController {
         let ac = UIAlertController(title: title, message: message, preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Ok", style: .default, handler: askQuestion))
         
+        present(ac, animated: true)
+    }
+    
+    @objc
+    private func scoreTapped() {
+        let ac = UIAlertController(title: "Score", message: "Your score is \(score)", preferredStyle: .alert)
+        ac.addAction(.init(title: "Continue", style: .default))
         present(ac, animated: true)
     }
 }

@@ -12,6 +12,9 @@ class ViewController: UITableViewController {
     private var allWords = ["silkworm"]
     private var usedWords = [String]()
     
+    private var alertTitle: String?
+    private var alertMessage: String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if let wordsURL = Bundle.main.url(forResource: "start (1)", withExtension: "txt") {
@@ -54,7 +57,53 @@ class ViewController: UITableViewController {
     }
     
     private func submit(answer: String) {
+        let lowerWord = answer.lowercased()
+        if isReal(lowerWord), isOriginal(lowerWord), isCompilable(lowerWord) {
+            usedWords.insert(answer, at: 0)
+            let indexPath = IndexPath(row: 0, section: 0)
+            tableView.insertRows(at: [indexPath], with: .automatic)
+            return
+        }
         
+        let ac = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "ok", style: .default))
+        present(ac, animated: true)
+    }
+    
+    func isCompilable(_ word: String) -> Bool {
+        guard var targerWord = navigationItem.title?.lowercased() else { return false }
+        for char in word {
+            if let index = targerWord.firstIndex(of: char) {
+                targerWord.remove(at: index)
+            } else {
+                alertTitle = "Word not possible"
+                alertMessage = "You can't spell that word from \"\(targerWord)\""
+                return false
+            }
+        }
+        return true
+    }
+    
+    func isOriginal(_ word: String) -> Bool {
+        if !usedWords.map({ $0.lowercased() }).contains(word) {
+            return true
+        } else {
+            alertTitle = "Word used already"
+            alertMessage = "Be more original!"
+            return false
+        }
+    }
+    
+    func isReal(_ word: String) -> Bool {
+        let checker = UITextChecker()
+        let range = NSRange(location: 0, length: word.utf16.count)
+        let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
+        if misspelledRange.location == NSNotFound {
+            return true
+        } else {
+            alertTitle = "Word not recognised"
+            alertMessage = "You can't just make them up, you know!"
+            return false
+        }
     }
 }
-

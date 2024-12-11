@@ -23,6 +23,7 @@ class ViewController: UITableViewController {
             }
         }
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPrompt))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "New Game", style: .plain, target: self, action: #selector(startGame))
         startGame()
     }
     
@@ -36,6 +37,7 @@ class ViewController: UITableViewController {
         return cell
     }
     
+    @objc
     private func startGame() {
         let targetWord = allWords.randomElement()
         title = targetWord?.uppercased()
@@ -58,19 +60,20 @@ class ViewController: UITableViewController {
     
     private func submit(answer: String) {
         let lowerWord = answer.lowercased()
-        if isReal(lowerWord), isOriginal(lowerWord), isCompilable(lowerWord) {
+        let checkFunctions = [isReal, isOriginal, isCompilable, isLongEnough, isNotTargetWord]
+        let isSubmitted = checkFunctions.allSatisfy { fun in
+            fun(lowerWord)
+        }
+        if isSubmitted {
             usedWords.insert(answer, at: 0)
             let indexPath = IndexPath(row: 0, section: 0)
             tableView.insertRows(at: [indexPath], with: .automatic)
             return
         }
-        
-        let ac = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
-        ac.addAction(UIAlertAction(title: "ok", style: .default))
-        present(ac, animated: true)
+        showErrorAlert()
     }
     
-    func isCompilable(_ word: String) -> Bool {
+    private func isCompilable(_ word: String) -> Bool {
         guard var targerWord = navigationItem.title?.lowercased() else { return false }
         for char in word {
             if let index = targerWord.firstIndex(of: char) {
@@ -84,7 +87,7 @@ class ViewController: UITableViewController {
         return true
     }
     
-    func isOriginal(_ word: String) -> Bool {
+    private func isOriginal(_ word: String) -> Bool {
         if !usedWords.map({ $0.lowercased() }).contains(word) {
             return true
         } else {
@@ -94,7 +97,7 @@ class ViewController: UITableViewController {
         }
     }
     
-    func isReal(_ word: String) -> Bool {
+    private func isReal(_ word: String) -> Bool {
         let checker = UITextChecker()
         let range = NSRange(location: 0, length: word.utf16.count)
         let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
@@ -105,5 +108,32 @@ class ViewController: UITableViewController {
             alertMessage = "You can't just make them up, you know!"
             return false
         }
+    }
+    
+    private func isLongEnough(_ word: String) -> Bool {
+        if word.count > 3 {
+            return true
+        } else {
+            alertTitle = "Word too short"
+            alertMessage = "Try something longer"
+            return false
+        }
+    }
+    
+    private func isNotTargetWord(_ word: String) -> Bool {
+        guard let targetWord = navigationItem.title else { return false }
+        if word != targetWord.lowercased() {
+            return true
+        } else {
+            alertTitle = "Word is target word"
+            alertMessage = "Stop messing around"
+            return false
+        }
+    }
+    
+    private func showErrorAlert() {
+        let ac = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Ok", style: .default))
+        present(ac, animated: true)
     }
 }

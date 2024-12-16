@@ -14,6 +14,7 @@
 		E7D006A92D0F5B76004E59F7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7D006A82D0F5B76004E59F7 /* Assets.xcassets */; };
 		E7D006AC2D0F5B76004E59F7 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = E7D006AB2D0F5B76004E59F7 /* Base */; };
 		E7D006B42D0F6334004E59F7 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D006B32D0F6334004E59F7 /* Models.swift */; };
+		E7D006D82D0FF1E6004E59F7 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D006D72D0FF1E6004E59F7 /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		E7D006AB2D0F5B76004E59F7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E7D006AD2D0F5B76004E59F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E7D006B32D0F6334004E59F7 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		E7D006D72D0FF1E6004E59F7 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 				E7D0069F2D0F5B75004E59F7 /* AppDelegate.swift */,
 				E7D006A12D0F5B75004E59F7 /* SceneDelegate.swift */,
 				E7D006A32D0F5B75004E59F7 /* ViewController.swift */,
+				E7D006D72D0FF1E6004E59F7 /* DetailViewController.swift */,
 				E7D006B32D0F6334004E59F7 /* Models.swift */,
 				E7D006A52D0F5B75004E59F7 /* Main.storyboard */,
 				E7D006A82D0F5B76004E59F7 /* Assets.xcassets */,
@@ -143,6 +146,7 @@
 			files = (
 				E7D006A42D0F5B75004E59F7 /* ViewController.swift in Sources */,
 				E7D006A02D0F5B75004E59F7 /* AppDelegate.swift in Sources */,
+				E7D006D82D0FF1E6004E59F7 /* DetailViewController.swift in Sources */,
 				E7D006A22D0F5B75004E59F7 /* SceneDelegate.swift in Sources */,
 				E7D006B42D0F6334004E59F7 /* Models.swift in Sources */,
 			);

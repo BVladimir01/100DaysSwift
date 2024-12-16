@@ -13,14 +13,21 @@ class ViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
+        let urlString: String
+        if navigationController?.tabBarItem.tag == 0 {
+            urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
+        } else {
+            urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
+        }
+        navigationItem.title = "Petitions"
         if let url = URL(string: urlString) {
             if let petitionsData = try? Data(contentsOf: url) {
                 petitions = parse(json: petitionsData)
                 tableView.reloadData()
+                return
             }
         }
-        navigationItem.title = "Petitions"
+        showError()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -35,12 +42,24 @@ class ViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let dvc = DetailViewController()
+        dvc.petition = petitions[indexPath.row]
+        navigationController?.pushViewController(dvc, animated: true)
+    }
+    
     private func parse(json: Data) -> [Petition] {
         let decoder = JSONDecoder()
         guard let petitionsFromJSON = try? decoder.decode(Petitions.self, from: json) else {
             return [Petition]()
         }
         return petitionsFromJSON.results
+    }
+    
+    private func showError() {
+        let ac = UIAlertController(title: "Error", message: "Try reconnecting", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Ok", style: .default))
+        present(ac, animated: true)
     }
 }
 

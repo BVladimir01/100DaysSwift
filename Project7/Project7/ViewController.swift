@@ -6,28 +6,20 @@
 //
 
 import UIKit
+import Foundation
 
 class ViewController: UITableViewController {
 
     private var petitions = [Petition]()
+    private var allPetitions = [Petition]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let urlString: String
-        if navigationController?.tabBarItem.tag == 0 {
-            urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
-        } else {
-            urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
-        }
         navigationItem.title = "Petitions"
-        if let url = URL(string: urlString) {
-            if let petitionsData = try? Data(contentsOf: url) {
-                petitions = parse(json: petitionsData)
-                tableView.reloadData()
-                return
-            }
-        }
-        showError()
+        loadPetitions()
+        let infoButton = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(showInfoAlert))
+        let filterButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(filterButtonPressed))
+        navigationItem.rightBarButtonItems = [infoButton, filterButton]
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -60,6 +52,71 @@ class ViewController: UITableViewController {
         let ac = UIAlertController(title: "Error", message: "Try reconnecting", preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Ok", style: .default))
         present(ac, animated: true)
+    }
+    
+    private func loadPetitions() {
+        let urlString: String
+        if navigationController?.tabBarItem.tag == 0 {
+            urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
+        } else {
+            urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
+        }
+        
+        
+        if let url = URL(string: urlString) {
+            if let petitionsData = try? Data(contentsOf: url) {
+                allPetitions = parse(json: petitionsData)
+                petitions = allPetitions
+                tableView.reloadData()
+                return
+            }
+        }
+        showError()
+    }
+    
+    @objc
+    private func showInfoAlert() {
+        let ac = UIAlertController(title: "Info", message: "This data comes from the 'We The People API of the Whitehouse'", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Ok", style: .default))
+        present(ac, animated: true)
+    }
+    
+    @objc
+    private func filterButtonPressed() {
+        let ac = UIAlertController(title: "Filter petition entries", message: "Only petitions containing following words will be displayed", preferredStyle: .alert)
+        ac.addTextField()
+        let filterAction = UIAlertAction(title: "Filter", style: .default) { [weak self, weak ac] _ in
+            guard let self, let ac else { return }
+            if let filterString = ac.textFields?[0].text {
+                applyFilters(using: filterString)
+            }
+        }
+        let discardAction = UIAlertAction(title: "Discard filerts", style: .destructive) { [weak self] _ in
+            guard let self else { return }
+            self.petitions = self.allPetitions
+            self.tableView.reloadData()
+        }
+        ac.addAction(filterAction)
+        ac.addAction(discardAction)
+        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        ac.preferredAction = filterAction
+        present(ac, animated: true)
+    }
+    
+    private func applyFilters(using filterString: String) {
+        let untrimmedFilteredWords = filterString.lowercased().components(separatedBy: .punctuationCharacters)
+        let filteredWords = untrimmedFilteredWords.map( { $0.trimmingCharacters(in: .whitespacesAndNewlines) })
+        print(filteredWords)
+        petitions = []
+        for petition in allPetitions {
+            for word in filteredWords {
+                if petition.body.lowercased().contains(word) || petition.title.lowercased().contains(word) {
+                    petitions.append(petition)
+                    break
+                }
+            }
+        }
+        tableView.reloadData()
     }
 }
 

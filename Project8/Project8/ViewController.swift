@@ -20,6 +20,7 @@ class ViewController: UIViewController {
     private var activatedButtons = [UIButton]()
     private var score = 0 {
         didSet {
+            score = max(score, 0)
             scoreLabel.text = "Score: \(score)"
         }
     }
@@ -154,6 +155,9 @@ class ViewController: UIViewController {
                 button.setTitle("WWW", for: .normal)
                 button.titleLabel?.font = .systemFont(ofSize: 36)
                 button.frame = CGRect(x: width*col, y: height*row, width: width, height: height)
+                button.layer.cornerRadius = 20
+                button.layer.borderWidth = 2
+                button.layer.borderColor = UIColor.gray.cgColor
                 button.addTarget(self, action: #selector(lettersTapped), for: .touchUpInside)
                 buttonsView.addSubview(button)
                 letterButtons.append(button)
@@ -213,24 +217,33 @@ class ViewController: UIViewController {
             activatedButtons.removeAll()
             currentAnswer.text = nil
         }
-        guard let guessedWord = currentAnswer.text else { return }
+        guard let guessedWord = currentAnswer.text, guessedWord != "" else { return }
         guard let answersText = answersLabel.text else { return }
         guard let guessedIndex = solutions.firstIndex(of: guessedWord) else {
             for button in activatedButtons {
                 button.isEnabled = true
             }
+            showUnsuccessfulSubmit(for: guessedWord)
+            score -= 1
             return
         }
         var answersTextArray = answersText.components(separatedBy: "\n")
         answersTextArray[guessedIndex] = guessedWord
         answersLabel.text = answersTextArray.joined(separator: "\n")
         score += 1
-        if score % 7 == 0 {
+        let gameIsOver = letterButtons.allSatisfy({!$0.isEnabled})
+        if gameIsOver {
             let ac = UIAlertController(title: "Congrats!", message: "You completed level \(level)", preferredStyle: .alert)
             ac.addAction(UIAlertAction(title: "Continue", style: .default, handler: levelUp))
             present(ac, animated: true)
         }
         
+    }
+    
+    private func showUnsuccessfulSubmit(for word: String) {
+        let ac = UIAlertController(title: "Wrong guess", message: "Word '\(word)' is not the answer", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
     }
     
     private func levelUp(alertAction: UIAlertAction) {

@@ -172,36 +172,43 @@ class ViewController: UIViewController {
     
     private func loadLevel() {
         
-        var cluesString = ""
-        var solutionString = ""
-        var lettersBits = [String]()
-        
-        guard let gameFileURL = Bundle.main.url(forResource: "level\(level)", withExtension: "txt") else { return }
-        guard let gameFileString = try? String(contentsOf: gameFileURL) else { return }
-        
-        for (i, question) in gameFileString.components(separatedBy: "\n").shuffled().enumerated() {
-            let contents = question.components(separatedBy: ": ")
-            let separatedAnswer = contents[0]
-            let answer = separatedAnswer.replacingOccurrences(of: "|", with: "")
-            let clue = contents[1]
+        DispatchQueue.global(qos: .userInitiated).async {
             
-            cluesString += ("\(i + 1). \(clue)\n")
-            solutionString += "\(answer.count) letters\n"
-            solutions.append(answer)
-            let answerBits = separatedAnswer.components(separatedBy: "|")
-            lettersBits.append(contentsOf: answerBits)
-        }
-        
-        cluesLabel.text = cluesString.trimmingCharacters(in: .whitespacesAndNewlines)
-        answersLabel.text = solutionString.trimmingCharacters(in: .whitespacesAndNewlines)
-        if lettersBits.count == letterButtons.count {
-            lettersBits.shuffle()
-            for i in 0..<lettersBits.count {
-                letterButtons[i].setTitle(lettersBits[i], for: .normal)
+            var cluesString = ""
+            var solutionString = ""
+            var lettersBits = [String]()
+            
+            guard let gameFileURL = Bundle.main.url(forResource: "level\(self.level)", withExtension: "txt") else { return }
+            guard let gameFileString = try? String(contentsOf: gameFileURL) else { return }
+            
+            for (i, question) in gameFileString.components(separatedBy: "\n").shuffled().enumerated() {
+                let contents = question.components(separatedBy: ": ")
+                let separatedAnswer = contents[0]
+                let answer = separatedAnswer.replacingOccurrences(of: "|", with: "")
+                let clue = contents[1]
+                
+                cluesString += ("\(i + 1). \(clue)\n")
+                solutionString += "\(answer.count) letters\n"
+                self.solutions.append(answer)
+                let answerBits = separatedAnswer.components(separatedBy: "|")
+                lettersBits.append(contentsOf: answerBits)
             }
+            self.updateUIAfterGameLoaded(cluesString: cluesString, answersString: solutionString, lettersBits: lettersBits.shuffled())
         }
     }
 
+    private func updateUIAfterGameLoaded(cluesString: String, answersString: String, lettersBits: [String]) {
+        DispatchQueue.main.async {
+            self.cluesLabel.text = cluesString.trimmingCharacters(in: .whitespacesAndNewlines)
+            self.answersLabel.text = answersString.trimmingCharacters(in: .whitespacesAndNewlines)
+            if lettersBits.count == self.letterButtons.count {
+                for i in 0..<lettersBits.count {
+                    self.letterButtons[i].setTitle(lettersBits[i], for: .normal)
+                }
+            }
+        }
+    }
+    
     @objc
     private func clearTapped(_ sender: UIButton? = nil) {
         currentAnswer.text = nil

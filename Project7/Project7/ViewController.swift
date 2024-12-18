@@ -50,11 +50,14 @@ class ViewController: UITableViewController {
     
     @objc
     private func showError() {
-        let ac = UIAlertController(title: "Error", message: "Try reconnecting", preferredStyle: .alert)
-        ac.addAction(UIAlertAction(title: "Ok", style: .default))
-        self.present(ac, animated: true)
+        DispatchQueue.main.async {
+            let ac = UIAlertController(title: "Error", message: "Try reconnecting", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "Ok", style: .default))
+            self.present(ac, animated: true)
+        }
     }
     
+    @objc
     private func loadPetitions() {
         let urlString: String
         if navigationController?.tabBarItem.tag == 0 {
@@ -68,9 +71,9 @@ class ViewController: UITableViewController {
                 if let petitionsData = try? Data(contentsOf: url) {
                     self.allPetitions = self.parse(json: petitionsData)
                     self.petitions = self.allPetitions
-                    self.tableView.performSelector(onMainThread: #selector(UITableView.reloadData), with: nil, waitUntilDone: false)
+                    DispatchQueue.main.async { self.tableView.reloadData() }
                 } else {
-                    self.performSelector(inBackground: #selector(self.showError), with: nil)
+                    self.showError()
                 }
             }
         }
@@ -106,19 +109,22 @@ class ViewController: UITableViewController {
     }
     
     private func applyFilters(using filterString: String) {
-        let untrimmedFilteredWords = filterString.lowercased().components(separatedBy: .punctuationCharacters)
-        let filteredWords = untrimmedFilteredWords.map( { $0.trimmingCharacters(in: .whitespacesAndNewlines) })
-        print(filteredWords)
-        petitions = []
-        for petition in allPetitions {
-            for word in filteredWords {
-                if petition.body.lowercased().contains(word) || petition.title.lowercased().contains(word) {
-                    petitions.append(petition)
-                    break
+        DispatchQueue.global(qos: .userInitiated).async {
+            let untrimmedFilteredWords = filterString.lowercased().components(separatedBy: .punctuationCharacters)
+            let filteredWords = untrimmedFilteredWords.map( { $0.trimmingCharacters(in: .whitespacesAndNewlines) })
+            self.petitions = []
+            for petition in self.allPetitions {
+                for word in filteredWords {
+                    if petition.body.lowercased().contains(word) || petition.title.lowercased().contains(word) {
+                        self.petitions.append(petition)
+                        break
+                    }
                 }
             }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
-        tableView.reloadData()
     }
 }
 

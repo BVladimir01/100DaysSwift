@@ -48,10 +48,11 @@ class ViewController: UITableViewController {
         return petitionsFromJSON.results
     }
     
+    @objc
     private func showError() {
         let ac = UIAlertController(title: "Error", message: "Try reconnecting", preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Ok", style: .default))
-        present(ac, animated: true)
+        self.present(ac, animated: true)
     }
     
     private func loadPetitions() {
@@ -62,16 +63,17 @@ class ViewController: UITableViewController {
             urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
         }
         
-        
-        if let url = URL(string: urlString) {
-            if let petitionsData = try? Data(contentsOf: url) {
-                allPetitions = parse(json: petitionsData)
-                petitions = allPetitions
-                tableView.reloadData()
-                return
+        DispatchQueue.global(qos: .userInitiated).async {
+            if let url = URL(string: urlString) {
+                if let petitionsData = try? Data(contentsOf: url) {
+                    self.allPetitions = self.parse(json: petitionsData)
+                    self.petitions = self.allPetitions
+                    self.tableView.performSelector(onMainThread: #selector(UITableView.reloadData), with: nil, waitUntilDone: false)
+                } else {
+                    self.performSelector(inBackground: #selector(self.showError), with: nil)
+                }
             }
         }
-        showError()
     }
     
     @objc

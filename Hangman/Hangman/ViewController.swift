@@ -30,8 +30,8 @@ class ViewController: UIViewController {
     }
     private let wordsFileName = "hangmanWords"
     
-    private let fontSize = 24.0
-    private let wordFontSize = 44.0
+    private let fontSize = 30.0
+    private let wordFontSize = 40.0
     
     override func loadView() {
         view = UIView()
@@ -99,11 +99,12 @@ class ViewController: UIViewController {
             hStack.axis = .horizontal
             hStack.translatesAutoresizingMaskIntoConstraints = false
             hStack.alignment = .center
-            hStack.distribution = .equalSpacing
             view.addSubview(hStack)
             
             NSLayoutConstraint.activate([
-                hStack.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+                hStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                hStack.leadingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.leadingAnchor),
+                hStack.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor)
             ])
             if let previousStack {
                 NSLayoutConstraint.activate([

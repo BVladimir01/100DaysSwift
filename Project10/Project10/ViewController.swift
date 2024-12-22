@@ -34,6 +34,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         cell.imageView.layer.borderWidth = 2
         cell.imageView.layer.cornerRadius = 3
         cell.layer.cornerRadius = 7
+        cell.backgroundColor = .gray
         
         return cell
     }
@@ -51,7 +52,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         })
         ac.addAction(UIAlertAction(title: "Delete photo", style: .destructive) { [weak self] _ in
             self?.people.remove(at: indexPath.item)
-            self?.collectionView.reloadData()
+            self?.collectionView.deleteItems(at: [indexPath])
         })
         
         present(ac, animated: true)
@@ -63,7 +64,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         picker.delegate = self
         picker.allowsEditing = true
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            picker.sourceType = .camera
+//            picker.sourceType = .camera
             print("camera available")
         } else {
             print("camera unavailable")
@@ -80,7 +81,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         }
         let newPerson = Person(name: "Unknown", imageName: imageName)
         people.append(newPerson)
-        collectionView.reloadData()
+        collectionView.insertItems(at: [IndexPath(item: people.count - 1, section: 0)])
         dismiss(animated: true)
     }
     
@@ -97,7 +98,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         print()
         print(Bundle.main.bundleURL)
         return paths[0]
-        return Bundle.main.resourceURL!
+//        return Bundle.main.resourceURL!
     }
 }
 

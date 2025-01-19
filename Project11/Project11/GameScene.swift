@@ -31,6 +31,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private let minY = 300.0
     
+    private enum BallColor: String, CaseIterable {
+        case blue, cyan, green, grey, purple, red
+    }
+    
     override func didMove(to view: SKView)  {
         scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
         scoreLabel.text = "Score: 0"
@@ -88,8 +92,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     private func createBall(at location: CGPoint) {
+        let colorString = BallColor.allCases.randomElement()!.rawValue.capitalized
         guard location.y > minY else { return }
-        let ball = SKSpriteNode(imageNamed: "ballRed")
+        let ball = SKSpriteNode(imageNamed: "ball" + colorString)
         ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2)
         ball.position = location
         ball.physicsBody?.restitution = 1
@@ -99,6 +104,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     private func removeBall(_ ball: SKNode) {
+        if let particles = SKEmitterNode(fileNamed: "FireParticles") {
+            particles.position = ball.position
+            addChild(particles)
+        }
         ball.removeFromParent()
     }
     

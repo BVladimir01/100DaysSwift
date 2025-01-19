@@ -189,6 +189,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    private func showOutOfBallsAlert() {
+        let ac = UIAlertController(title: "Game end", message: "You are out of balls\nTotal score: \(score)", preferredStyle: .alert)
+        let newGameAction = UIAlertAction(title: "New game", style: .default) { [weak self] _ in
+            guard let self else { return }
+            self.score = 0
+            self.ballsLeft = maxBalls
+            self.isInEditingMode = false
+            for child in self.children {
+                if child.name == "box" {
+                    child.removeFromParent()
+                }
+            }
+        }
+        ac.addAction(newGameAction)
+        ac.preferredAction = newGameAction
+        view?.window?.rootViewController?.present(ac, animated: true)
+    }
+    
     // MARK: - SKPhysicsContactDelegate
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -213,6 +231,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         } else if node.name == "bad" {
             removeBall(ball)
             score -= 1
+            if ballsLeft == 0 {
+                showOutOfBallsAlert()
+            }
         }
     }
     

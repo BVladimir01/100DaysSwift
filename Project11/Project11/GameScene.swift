@@ -12,6 +12,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private var scoreLabel: SKLabelNode!
     private var editLabel: SKLabelNode!
+    private var ballsCounter: SKLabelNode!
     
     private var score = 0 {
         didSet {
@@ -35,16 +36,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case blue, cyan, green, grey, purple, red
     }
     
+    private let maxBalls = 5
+    private var ballsLeft: Int {
+        didSet {
+            ballsCounter.text = "\(ballsLeft) balls left"
+        }
+    }
+    
+    private struct PhysicsCategory {
+        static let ball: UInt32 = 0b001
+        static let slot: UInt32 = 0b010
+        static let box: UInt32 = 0b100
+    }
+    
     override func didMove(to view: SKView)  {
+        
         scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
         scoreLabel.text = "Score: 0"
         scoreLabel.position = CGPoint(x: 980, y: 700)
         scoreLabel.horizontalAlignmentMode = .right
         addChild(scoreLabel)
+        
         editLabel = SKLabelNode(fontNamed: "Chalkduster")
         editLabel.text = "Edit"
         editLabel.position = CGPoint(x: 80, y: 700)
         addChild(editLabel)
+        
+        ballsCounter = SKLabelNode(fontNamed: "Chalkduster")
+        ballsCounter.text = "\(ballsLeft) balls left"
+        ballsCounter.position = CGPoint(x: 980, y: 660)
+        ballsCounter.horizontalAlignmentMode = .right
+        addChild(ballsCounter)
         
         physicsWorld.contactDelegate = self
         
@@ -74,7 +96,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if isInEditingMode {
                     createBox(at: location)
                 } else {
+                    guard location.y > minY, ballsLeft > 0 else { break }
                     createBall(at: location)
+                    ballsLeft -= 1
                 }
             }
         }
@@ -88,19 +112,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         box.position = location
         box.physicsBody = SKPhysicsBody(rectangleOf: box.size)
         box.physicsBody?.isDynamic = false
+        box.physicsBody?.categoryBitMask = PhysicsCategory.box
+        box.name = "box"
         addChild(box)
     }
     
     private func createBall(at location: CGPoint) {
         let colorString = BallColor.allCases.randomElement()!.rawValue.capitalized
-        guard location.y > minY else { return }
         let ball = SKSpriteNode(imageNamed: "ball" + colorString)
         ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2)
         ball.position = location
         ball.physicsBody?.restitution = 1
         addChild(ball)
         ball.name = "ball"
-        ball.physicsBody?.contactTestBitMask = ball.physicsBody!.collisionBitMask
+        ball.physicsBody?.categoryBitMask = PhysicsCategory.ball
+        ball.physicsBody?.contactTestBitMask = PhysicsCategory.slot | PhysicsCategory.box
     }
     
     private func removeBall(_ ball: SKNode) {
@@ -145,6 +171,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(slot)
         slot.physicsBody = SKPhysicsBody(rectangleOf: slot.size)
         slot.physicsBody?.isDynamic = false
+        slot.physicsBody?.categoryBitMask = PhysicsCategory.slot
         glow.position = position
         let action = SKAction.rotate(byAngle: .pi, duration: 10)
         let spin = SKAction.repeatForever(action)
@@ -168,10 +195,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         guard let nodeA = contact.bodyA.node else { return }
         guard let nodeB = contact.bodyB.node else { return }
         
-        if nodeA.name == "ball" {
-            didCollide(ball: nodeA, other: nodeB)
-        } else if nodeB.name == "ball" {
+        switch nodeA.physicsBody?.categoryBitMask {
+        case PhysicsCategory.box:
+            nodeA.removeFromParent()
+        case PhysicsCategory.slot:
             didCollide(ball: nodeB, other: nodeA)
+        default:
+            return
         }
     }
     
@@ -179,9 +209,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if node.name == "good" {
             removeBall(ball)
             score += 1
+            ballsLeft += 1
         } else if node.name == "bad" {
             removeBall(ball)
             score -= 1
         }
+    }
+    
+    override init() {
+        ballsLeft = maxBalls
+        super.init()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        ballsLeft = maxBalls
+        super.init(coder: aDecoder)
     }
 }

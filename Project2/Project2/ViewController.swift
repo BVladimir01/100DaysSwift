@@ -17,6 +17,8 @@ class ViewController: UIViewController {
     }
     private var correctAnswer = 0
     private var questionsAnswered = 0
+    private let maxQustions = 5
+    private var highScore = 0
     @IBOutlet private weak var button1: UIButton!
     @IBOutlet private weak var button2: UIButton!
     @IBOutlet private weak var button3: UIButton!
@@ -27,6 +29,8 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        highScore = UserDefaults.standard.integer(forKey: "highScore")
+        print(highScore)
         for button in buttons {
             button.layer.borderWidth = 1
             button.layer.borderColor = UIColor.lightGray.cgColor
@@ -38,7 +42,7 @@ class ViewController: UIViewController {
     private func askQuestion(_ action: UIAlertAction! = nil) {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
-        title = "What flag is \(countries[correctAnswer].capitalized)? Score: \(score)/\(questionsAnswered)"
+        title = "What flag is \(countries[correctAnswer].capitalized)? Queestion: \(questionsAnswered + 1)/\(maxQustions)"
         for (i, button) in buttons.enumerated() {
             button.setImage(UIImage(named: countries[i]), for: .normal)
         }
@@ -57,8 +61,12 @@ class ViewController: UIViewController {
             title = "Wrong"
             message = "That is the flag of \(countries[sender.tag].capitalized)\n Your score is \(score)"
         }
-        if questionsAnswered == 5 {
+        if questionsAnswered == maxQustions {
             title = "Game is over"
+            if score > highScore {
+                title = "Congrats, new highscore"
+                UserDefaults.standard.set(score, forKey: "highScore")
+            }
             message = "Your final score is \(score)"
             questionsAnswered = 0
         }

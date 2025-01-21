@@ -24,7 +24,7 @@ class ViewController: UITableViewController {
         }
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPrompt))
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "New Game", style: .plain, target: self, action: #selector(startGame))
-        startGame()
+        loadGame()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -37,9 +37,23 @@ class ViewController: UITableViewController {
         return cell
     }
     
+    private func loadGame() {
+        let storage = UserDefaults.standard
+        if let savedUsedWords = storage.object(forKey: "usedWords") as? [String], let savedTargetWord = storage.object(forKey: "targetWord") as? String {
+            usedWords = savedUsedWords
+            title = savedTargetWord.uppercased()
+            tableView.reloadData()
+        } else {
+            startGame()
+        }
+        
+    }
+    
     @objc
     private func startGame() {
         let targetWord = allWords.randomElement()
+        UserDefaults.standard.set(targetWord, forKey: "targetWord")
+        UserDefaults.standard.set([String](), forKey: "usedWords")
         title = targetWord?.uppercased()
         usedWords.removeAll(keepingCapacity: true)
         tableView.reloadData()
@@ -55,6 +69,7 @@ class ViewController: UITableViewController {
         }
         ac.addAction(submitAction)
         ac.preferredAction = submitAction
+        ac.addAction(.init(title: "Cancel", style: .cancel))
         present(ac, animated: true)
     }
     
@@ -66,6 +81,7 @@ class ViewController: UITableViewController {
         }
         if isSubmitted {
             usedWords.insert(answer, at: 0)
+            UserDefaults.standard.set(usedWords, forKey: "usedWords")
             let indexPath = IndexPath(row: 0, section: 0)
             tableView.insertRows(at: [indexPath], with: .automatic)
             return

@@ -13,7 +13,6 @@ class ViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         performSelector(inBackground: #selector(self.loadPictures), with: nil)
         title = "Storm Viewer"
         navigationController?.navigationBar.prefersLargeTitles = true

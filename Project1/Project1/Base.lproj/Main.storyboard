@@ -18,14 +18,14 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="Picture" textLabel="Urk-yS-lAE" style="IBUITableViewCellStyleDefault" id="Eg1-3g-EQ9">
-                                <rect key="frame" x="0.0" y="50" width="393" height="69.666664123535156"/>
+                                <rect key="frame" x="0.0" y="50" width="393" height="66.666664123535156"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Eg1-3g-EQ9" id="IP9-aM-qRZ">
-                                    <rect key="frame" x="0.0" y="0.0" width="362.66666666666669" height="69.666664123535156"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="362.66666666666669" height="66.666664123535156"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Urk-yS-lAE">
-                                            <rect key="frame" x="20" y="0.0" width="334.66666666666669" height="69.666664123535156"/>
+                                            <rect key="frame" x="20" y="0.0" width="334.66666666666669" height="66.666664123535156"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="28"/>
                                             <nil key="textColor"/>
@@ -73,25 +73,38 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xMm-hw-sKx">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <rect key="frame" x="0.0" y="59" width="393" height="671"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w0B-ue-eWN">
+                                <rect key="frame" x="0.0" y="738" width="393" height="80"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="qiC-hE-UOD"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Ve5-uw-zl4"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="xMm-hw-sKx" firstAttribute="top" secondItem="Ve5-uw-zl4" secondAttribute="top" id="3uz-ll-ZJI"/>
+                            <constraint firstItem="Ve5-uw-zl4" firstAttribute="bottom" secondItem="w0B-ue-eWN" secondAttribute="bottom" id="Kd8-75-mfS"/>
+                            <constraint firstItem="w0B-ue-eWN" firstAttribute="top" secondItem="xMm-hw-sKx" secondAttribute="bottom" constant="8" symbolic="YES" id="Rkg-eb-hX5"/>
                             <constraint firstItem="Ve5-uw-zl4" firstAttribute="trailing" secondItem="xMm-hw-sKx" secondAttribute="trailing" id="YGF-ef-6bI"/>
-                            <constraint firstItem="Ve5-uw-zl4" firstAttribute="bottom" secondItem="xMm-hw-sKx" secondAttribute="bottom" id="jTQ-7Y-0lc"/>
+                            <constraint firstItem="Ve5-uw-zl4" firstAttribute="trailing" secondItem="w0B-ue-eWN" secondAttribute="trailing" id="Z6T-u3-dbX"/>
                             <constraint firstItem="xMm-hw-sKx" firstAttribute="leading" secondItem="Ve5-uw-zl4" secondAttribute="leading" id="lQa-Sd-E2v"/>
+                            <constraint firstItem="w0B-ue-eWN" firstAttribute="leading" secondItem="Ve5-uw-zl4" secondAttribute="leading" id="mwK-tb-aFl"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="counterLabel" destination="w0B-ue-eWN" id="3DD-i7-blH"/>
                         <outlet property="imageView" destination="xMm-hw-sKx" id="Uze-KE-ys8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hRk-ck-k6q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1656" y="-38"/>
+            <point key="canvasLocation" x="1655.7251908396945" y="-38.028169014084511"/>
         </scene>
     </scenes>
     <resources>

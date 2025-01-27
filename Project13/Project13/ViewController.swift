@@ -30,11 +30,49 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         present(ac, animated: true)
     }
     
+    private func setFilter(action: UIAlertAction) {
+        guard currentImage != nil else { return }
+        guard let filterName = action.title else { return }
+        let beginImage = CIImage(image: currentImage)
+        currentFilter = CIFilter(name: "CI" + filterName)
+        currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
+        applyProcessing()
+    }
+    
     @IBAction func save() {
+        guard let image = imageView.image else { return }
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
+    }
+    
+    @objc
+    private func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error {
+            let ac = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+            ac.addAction(.init(title: "OK", style: .default))
+            present(ac, animated: true)
+        } else {
+            let ac = UIAlertController(title: "Saved", message: "Your altered image has been saved to your photos", preferredStyle: .alert)
+            ac.addAction(.init(title: "OK", style: .default))
+            present(ac, animated: true)
+        }
     }
     
     @IBAction func intensityChanged() {
         applyProcessing()
+    }
+    
+    private func applyProcessing() {
+        guard let filteredImage = currentFilter.outputImage else { return }
+        let intensity = intensity.value
+        let inputKeys = currentFilter.inputKeys
+        if inputKeys.contains(kCIInputIntensityKey) {currentFilter.setValue(intensity, forKey: kCIInputIntensityKey)}
+        if inputKeys.contains(kCIInputRadiusKey) {currentFilter.setValue(intensity*200, forKey: kCIInputRadiusKey)}
+        if inputKeys.contains(kCIInputScaleKey) {currentFilter.setValue(intensity*10, forKey: kCIInputScaleKey)}
+        if inputKeys.contains(kCIInputCenterKey) {currentFilter.setValue(CIVector(x: currentImage.size.width/2, y: currentImage.size.height/2), forKey: kCIInputCenterKey)}
+        guard let endImage = context.createCGImage(filteredImage, from: filteredImage.extent) else { return }
+        let uiImage = UIImage(cgImage: endImage)
+//        let uiImage = UIImage(ciImage: filteredImage)
+        imageView.image = uiImage
     }
     
     override func viewDidLoad() {
@@ -60,29 +98,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         let beginImage = CIImage(image: currentImage)
         currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
         dismiss(animated: true)
-        applyProcessing()
-    }
-    
-    private func applyProcessing() {
-        guard let filteredImage = currentFilter.outputImage else { return }
-        let intensity = intensity.value
-        let inputKeys = currentFilter.inputKeys
-        if inputKeys.contains(kCIInputIntensityKey) {currentFilter.setValue(intensity, forKey: kCIInputIntensityKey)}
-        if inputKeys.contains(kCIInputRadiusKey) {currentFilter.setValue(intensity*200, forKey: kCIInputRadiusKey)}
-        if inputKeys.contains(kCIInputScaleKey) {currentFilter.setValue(intensity*10, forKey: kCIInputScaleKey)}
-        if inputKeys.contains(kCIInputCenterKey) {currentFilter.setValue(CIVector(x: currentImage.size.width/2, y: currentImage.size.height/2), forKey: kCIInputCenterKey)}
-        guard let endImage = context.createCGImage(filteredImage, from: filteredImage.extent) else { return }
-        let uiImage = UIImage(cgImage: endImage)
-//        let uiImage = UIImage(ciImage: filteredImage)
-        imageView.image = uiImage
-    }
-    
-    private func setFilter(action: UIAlertAction) {
-        guard currentImage != nil else { return }
-        guard let filterName = action.title else { return }
-        let beginImage = CIImage(image: currentImage)
-        currentFilter = CIFilter(name: "CI" + filterName)
-        currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
         applyProcessing()
     }
 }

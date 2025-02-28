@@ -17,10 +17,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="foM-XZ-L4I">
-                                <rect key="frame" x="0.0" y="103" width="393" height="623"/>
+                                <rect key="frame" x="0.0" y="103" width="393" height="606.66666666666663"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jGJ-JW-0Ay">
-                                        <rect key="frame" x="8" y="0.0" width="377" height="623"/>
+                                        <rect key="frame" x="8" y="0.0" width="377" height="606.66666666666663"/>
                                         <color key="backgroundColor" systemColor="systemCyanColor"/>
                                     </imageView>
                                 </subviews>
@@ -32,14 +32,26 @@
                                     <constraint firstItem="jGJ-JW-0Ay" firstAttribute="trailing" secondItem="foM-XZ-L4I" secondAttribute="trailingMargin" id="vsU-qn-Owj"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Intensity:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xGb-Pc-nFr">
-                                <rect key="frame" x="7" y="734" width="69.666666666666671" height="42"/>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="156-fA-MyV" userLabel="RadiusSlider">
+                                <rect key="frame" x="91.666666666666657" y="713" width="294.33333333333337" height="31"/>
+                                <connections>
+                                    <action selector="radiusChanged" destination="BYZ-38-t0r" eventType="valueChanged" id="0Wg-Rw-Z7u"/>
+                                </connections>
+                            </slider>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Radius:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jNn-hq-QHz" userLabel="RadiusLabel">
+                                <rect key="frame" x="7" y="717.66666666666663" width="56" height="20.333333333333371"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="YfY-Uf-iUG">
-                                <rect key="frame" x="91.666666666666657" y="740" width="294.33333333333337" height="31"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Intensity:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xGb-Pc-nFr" userLabel="IntensityLabel">
+                                <rect key="frame" x="7" y="755.66666666666663" width="69.666666666666671" height="20.333333333333371"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="YfY-Uf-iUG" userLabel="IntensitySlider">
+                                <rect key="frame" x="91.666666666666657" y="751" width="294.33333333333337" height="31"/>
                                 <connections>
                                     <action selector="intensityChanged" destination="BYZ-38-t0r" eventType="valueChanged" id="SZK-TG-U9D"/>
                                 </connections>
@@ -67,15 +79,19 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="YfY-Uf-iUG" secondAttribute="trailing" constant="9" id="1zz-yp-40J"/>
                             <constraint firstItem="NJu-60-L0P" firstAttribute="top" secondItem="xGb-Pc-nFr" secondAttribute="bottom" constant="7" id="2DP-vv-B4q"/>
                             <constraint firstItem="xGb-Pc-nFr" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="7" id="2bi-ZN-lkh"/>
-                            <constraint firstItem="NJu-60-L0P" firstAttribute="baseline" secondItem="hi8-MQ-nv3" secondAttribute="baseline" id="39p-wT-Vg9"/>
-                            <constraint firstItem="YfY-Uf-iUG" firstAttribute="top" secondItem="foM-XZ-L4I" secondAttribute="bottom" constant="14" id="DLC-qh-UP0"/>
+                            <constraint firstItem="NJu-60-L0P" firstAttribute="centerY" secondItem="hi8-MQ-nv3" secondAttribute="centerY" id="39p-wT-Vg9"/>
+                            <constraint firstItem="jNn-hq-QHz" firstAttribute="leading" secondItem="xGb-Pc-nFr" secondAttribute="leading" id="AGu-iA-dQq"/>
+                            <constraint firstItem="jNn-hq-QHz" firstAttribute="centerY" secondItem="156-fA-MyV" secondAttribute="centerY" id="BCx-Jh-Y2c"/>
                             <constraint firstItem="foM-XZ-L4I" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="GX2-hg-Y0X"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="hi8-MQ-nv3" secondAttribute="trailing" constant="16" id="IBh-Eh-zBx"/>
+                            <constraint firstItem="foM-XZ-L4I" firstAttribute="bottom" secondItem="jNn-hq-QHz" secondAttribute="top" constant="-8" id="LNm-VN-aiF"/>
                             <constraint firstItem="NJu-60-L0P" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-9" id="NqE-3c-9vM"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="centerX" secondItem="NJu-60-L0P" secondAttribute="trailing" id="RWY-lx-sxm"/>
+                            <constraint firstItem="YfY-Uf-iUG" firstAttribute="top" secondItem="156-fA-MyV" secondAttribute="bottom" constant="8" id="Wwf-1f-uRZ"/>
+                            <constraint firstItem="156-fA-MyV" firstAttribute="trailing" secondItem="YfY-Uf-iUG" secondAttribute="trailing" id="blk-mF-EVU"/>
                             <constraint firstItem="YfY-Uf-iUG" firstAttribute="leading" secondItem="xGb-Pc-nFr" secondAttribute="trailing" constant="17" id="cTb-SY-Xad"/>
-                            <constraint firstItem="xGb-Pc-nFr" firstAttribute="top" secondItem="foM-XZ-L4I" secondAttribute="bottom" constant="8" id="gdz-0V-T78"/>
                             <constraint firstItem="foM-XZ-L4I" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="sBC-cr-bGg"/>
+                            <constraint firstItem="156-fA-MyV" firstAttribute="leading" secondItem="YfY-Uf-iUG" secondAttribute="leading" id="uAE-QE-gLf"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="NJu-60-L0P" secondAttribute="bottom" id="vhO-RG-UXh"/>
                             <constraint firstItem="xGb-Pc-nFr" firstAttribute="centerY" secondItem="YfY-Uf-iUG" secondAttribute="centerY" id="xAT-6f-nrY"/>
                             <constraint firstItem="hi8-MQ-nv3" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="xXI-If-i2P"/>
@@ -84,8 +100,10 @@
                     </view>
                     <navigationItem key="navigationItem" id="4Vk-Ap-xjC"/>
                     <connections>
+                        <outlet property="changeFilterButton" destination="NJu-60-L0P" id="DbO-L3-7Ta"/>
                         <outlet property="imageView" destination="jGJ-JW-0Ay" id="xtF-do-LMs"/>
                         <outlet property="intensity" destination="YfY-Uf-iUG" id="S8X-fi-ja1"/>
+                        <outlet property="radiusSlider" destination="156-fA-MyV" id="tOY-9W-Y2R"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -116,7 +134,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemCyanColor">
-            <color red="0.19607843137254902" green="0.67843137254901964" blue="0.90196078431372551" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.1960784314" green="0.67843137249999996" blue="0.90196078430000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

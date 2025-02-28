@@ -15,7 +15,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     private var currentFilter: CIFilter!
 
     @IBOutlet weak var intensity: UISlider!
+    @IBOutlet weak var radiusSlider: UISlider!
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var changeFilterButton: UIButton!
     
     @IBAction func changeFilter() {
         let ac = UIAlertController(title: "Choose filter", message: nil, preferredStyle: .actionSheet)
@@ -31,16 +33,22 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     private func setFilter(action: UIAlertAction) {
-        guard currentImage != nil else { return }
         guard let filterName = action.title else { return }
-        let beginImage = CIImage(image: currentImage)
         currentFilter = CIFilter(name: "CI" + filterName)
+        changeFilterButton.setTitle(filterName, for: .normal)
+        guard currentImage != nil else { return }
+        let beginImage = CIImage(image: currentImage)
         currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
         applyProcessing()
     }
     
     @IBAction func save() {
-        guard let image = imageView.image else { return }
+        guard let image = imageView.image else {
+            let ac = UIAlertController(title: "Error", message: "No image chosen", preferredStyle: .alert)
+            ac.addAction(.init(title: "Ok", style: .cancel))
+            present(ac, animated: true)
+            return
+        }
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
     }
     
@@ -61,12 +69,17 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         applyProcessing()
     }
     
+    @IBAction func radiusChanged() {
+        applyProcessing()
+    }
+    
     private func applyProcessing() {
         guard let filteredImage = currentFilter.outputImage else { return }
         let intensity = intensity.value
+        let radius = radiusSlider.value
         let inputKeys = currentFilter.inputKeys
         if inputKeys.contains(kCIInputIntensityKey) {currentFilter.setValue(intensity, forKey: kCIInputIntensityKey)}
-        if inputKeys.contains(kCIInputRadiusKey) {currentFilter.setValue(intensity*200, forKey: kCIInputRadiusKey)}
+        if inputKeys.contains(kCIInputRadiusKey) {currentFilter.setValue(radius, forKey: kCIInputRadiusKey)}
         if inputKeys.contains(kCIInputScaleKey) {currentFilter.setValue(intensity*10, forKey: kCIInputScaleKey)}
         if inputKeys.contains(kCIInputCenterKey) {currentFilter.setValue(CIVector(x: currentImage.size.width/2, y: currentImage.size.height/2), forKey: kCIInputCenterKey)}
         guard let endImage = context.createCGImage(filteredImage, from: filteredImage.extent) else { return }
@@ -81,6 +94,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         currentFilter = CIFilter(name: "CISepiaTone")
         title = "YACIFP"
         intensity.value = 1
+        radiusSlider.value = 1
+        radiusSlider.minimumValue = 0.1
+        radiusSlider.maximumValue = 500
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPicture))
     }
     

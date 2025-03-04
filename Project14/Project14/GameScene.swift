@@ -19,8 +19,8 @@ class GameScene: SKScene {
     }
     private var numRounds = 0
     private var popupTime = 0.9
-    
     private var slots = [WhackSlot]()
+    private var gameIsOver = false
     
     override func didMove(to view: SKView) {
         setUpBackground()
@@ -28,6 +28,21 @@ class GameScene: SKScene {
         setUpSlots()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+            self?.createEnemy()
+        }
+    }
+    
+    private func startGame() {
+        gameIsOver = false
+        score = 0
+        numRounds = 0
+        popupTime = 0.9
+        removeAllChildren()
+        setUpBackground()
+        setUpScoreLabel()
+        setUpSlots()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             self?.createEnemy()
         }
     }
@@ -46,6 +61,7 @@ class GameScene: SKScene {
         scoreLabel.position = CGPoint(x: 8, y: 8)
         scoreLabel.horizontalAlignmentMode = .left
         scoreLabel.fontSize = 48
+        scoreLabel.zPosition = 1
         addChild(scoreLabel)
     }
     
@@ -70,14 +86,7 @@ class GameScene: SKScene {
         numRounds += 1
         
         if numRounds >= 10 {
-            for slot in slots {
-                slot.hide()
-            }
-            
-            let gameOver = SKSpriteNode(imageNamed: "gameOver")
-            gameOver.position = CGPoint(x: 1024/2, y: 768/2)
-            gameOver.zPosition = 1
-            addChild(gameOver)
+            gameOver()
             return
         }
         
@@ -111,7 +120,29 @@ class GameScene: SKScene {
         }
     }
     
+    private func gameOver() {
+        for slot in slots {
+            slot.hide()
+        }
+        
+        let gameOverLabel = SKSpriteNode(imageNamed: "gameOver")
+        gameOverLabel.position = CGPoint(x: 1024/2, y: 768/2)
+        gameOverLabel.zPosition = 1
+        gameOverLabel.name = "gameOver"
+        addChild(gameOverLabel)
+        scoreLabel.position = CGPoint(x: 1024/2, y: 768/2 - 100)
+        scoreLabel.horizontalAlignmentMode = .center
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            self?.gameIsOver = true
+        }
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if gameIsOver {
+            startGame()
+            return
+        }
         for touch in touches {
             let location = touch.location(in: self)
             let nodes = nodes(at: location)

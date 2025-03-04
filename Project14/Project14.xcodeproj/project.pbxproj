@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E7DAE62D2D7700A2008E9D0F /* SmokeParticles.sks in Resources */ = {isa = PBXBuildFile; fileRef = E7DAE62B2D7700A2008E9D0F /* SmokeParticles.sks */; };
+		E7DAE62E2D7700A2008E9D0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7DAE62C2D7700A2008E9D0F /* Assets.xcassets */; };
 		E7EBC65C2D75A31900311D2E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7EBC65B2D75A31900311D2E /* AppDelegate.swift */; };
 		E7EBC65E2D75A31900311D2E /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = E7EBC65D2D75A31900311D2E /* GameScene.sks */; };
 		E7EBC6622D75A31900311D2E /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7EBC6612D75A31900311D2E /* GameScene.swift */; };
@@ -18,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E7DAE62B2D7700A2008E9D0F /* SmokeParticles.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SmokeParticles.sks; sourceTree = "<group>"; };
+		E7DAE62C2D7700A2008E9D0F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E7EBC6582D75A31900311D2E /* Project14.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Project14.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7EBC65B2D75A31900311D2E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E7EBC65D2D75A31900311D2E /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -40,6 +44,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E7DAE62A2D770063008E9D0F /* Effects */ = {
+			isa = PBXGroup;
+			children = (
+				E7DAE62B2D7700A2008E9D0F /* SmokeParticles.sks */,
+				E7DAE62C2D7700A2008E9D0F /* Assets.xcassets */,
+			);
+			path = Effects;
+			sourceTree = "<group>";
+		};
 		E7EBC64F2D75A31900311D2E = {
 			isa = PBXGroup;
 			children = (
@@ -59,6 +72,7 @@
 		E7EBC65A2D75A31900311D2E /* Project14 */ = {
 			isa = PBXGroup;
 			children = (
+				E7DAE62A2D770063008E9D0F /* Effects */,
 				E7EBC65B2D75A31900311D2E /* AppDelegate.swift */,
 				E7EBC65D2D75A31900311D2E /* GameScene.sks */,
 				E7EBC6612D75A31900311D2E /* GameScene.swift */,
@@ -132,6 +146,8 @@
 				E7EBC65E2D75A31900311D2E /* GameScene.sks in Resources */,
 				E7EBC6672D75A31900311D2E /* Base in Resources */,
 				E7EBC6692D75A31B00311D2E /* Assets.xcassets in Resources */,
+				E7DAE62D2D7700A2008E9D0F /* SmokeParticles.sks in Resources */,
+				E7DAE62E2D7700A2008E9D0F /* Assets.xcassets in Resources */,
 				E7EBC66C2D75A31B00311D2E /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

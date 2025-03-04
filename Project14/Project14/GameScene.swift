@@ -151,6 +151,12 @@ class GameScene: SKScene {
                 if node.name == "charEnemy" || node.name == "charFriend" {
                     guard whackSlot.isVisible, !whackSlot.isHit else { continue }
                     whackSlot.hit()
+                    let pos = whackSlot.position
+                    if let smoke = SKEmitterNode(fileNamed: "SmokeParticles") {
+                        smoke.position = location
+                        smoke.zPosition = 1
+                        addChild(smoke)
+                    }
                 }
                 if node.name == "charEnemy" {
                     score += 1

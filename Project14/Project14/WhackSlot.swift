@@ -11,8 +11,8 @@ import SpriteKit
 class WhackSlot: SKNode {
     
     private var charNode: SKSpriteNode!
-    private var isVisible = false
-    private var isHit = false
+    var isVisible = false
+    var isHit = false
     
     func configure(at position: CGPoint) {
         self.position = position
@@ -42,7 +42,8 @@ class WhackSlot: SKNode {
             charNode.texture = SKTexture(imageNamed: "penguinGood")
         }
         
-        charNode.run(.moveBy(x: 0, y: 80, duration: 0.05))
+        charNode.setScale(1)
+        charNode.run(.moveBy(x: 0, y: 80, duration: 0.1))
         isVisible = true
         isHit = false
         
@@ -53,7 +54,18 @@ class WhackSlot: SKNode {
     
     func hide() {
         if !isVisible { return }
-        charNode.run(.moveBy(x: 0, y: -80, duration: 0.05))
+        charNode.run(.moveBy(x: 0, y: -80, duration: 0.1))
         isVisible = false
+    }
+    
+    func hit() {
+        isHit = true
+        
+        let delay = SKAction.wait(forDuration: 0.2)
+        let action = SKAction.moveBy(x: 0, y: -80, duration: 0.4)
+        let notVisible = SKAction.run { [unowned self] in
+            self.isVisible = false
+        }
+        charNode.run(.sequence([delay, action, notVisible]))
     }
 }

@@ -151,7 +151,6 @@ class GameScene: SKScene {
                 if node.name == "charEnemy" || node.name == "charFriend" {
                     guard whackSlot.isVisible, !whackSlot.isHit else { continue }
                     whackSlot.hit()
-                    let pos = whackSlot.position
                     if let smoke = SKEmitterNode(fileNamed: "SmokeParticles") {
                         smoke.position = location
                         smoke.zPosition = 1
@@ -161,11 +160,11 @@ class GameScene: SKScene {
                 if node.name == "charEnemy" {
                     score += 1
                     node.setScale(0.85)
-                    run(.playSoundFileNamed("whack", waitForCompletion: false))
+                    run(.playSoundFileNamed("whack.caf", waitForCompletion: false))
                 }
                 if node.name == "charFriend" {
                     score -= 5
-                    run(.playSoundFileNamed("whackBad", waitForCompletion: false))
+                    run(.playSoundFileNamed("whackBad.caf", waitForCompletion: false))
                 }
             }
         }

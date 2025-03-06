@@ -10,10 +10,10 @@ import UIKit
 
 class ViewController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
-    private var currentImage: UIImage!
+    private var currentImage: UIImage?
     private var context: CIContext!
     private var currentFilter: CIFilter!
-
+    
     @IBOutlet weak var intensity: UISlider!
     @IBOutlet weak var radiusSlider: UISlider!
     @IBOutlet weak var imageView: UIImageView!
@@ -36,10 +36,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         guard let filterName = action.title else { return }
         currentFilter = CIFilter(name: "CI" + filterName)
         changeFilterButton.setTitle(filterName, for: .normal)
-        guard currentImage != nil else { return }
-        let beginImage = CIImage(image: currentImage)
-        currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
-        applyProcessing()
+        guard let currentImage else { return }
+        setFilterBeginImage(to: currentImage)
+        fadeImageOut { [weak self] in
+            self?.applyProcessing()
+            self?.fadeImageIn()
+        }
     }
     
     @IBAction func save() {
@@ -74,7 +76,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     private func applyProcessing() {
-        guard let filteredImage = currentFilter.outputImage else { return }
+        guard let filteredImage = currentFilter.outputImage, let currentImage else { return }
         let intensity = intensity.value
         let radius = radiusSlider.value
         let inputKeys = currentFilter.inputKeys
@@ -82,9 +84,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         if inputKeys.contains(kCIInputRadiusKey) {currentFilter.setValue(radius, forKey: kCIInputRadiusKey)}
         if inputKeys.contains(kCIInputScaleKey) {currentFilter.setValue(intensity*10, forKey: kCIInputScaleKey)}
         if inputKeys.contains(kCIInputCenterKey) {currentFilter.setValue(CIVector(x: currentImage.size.width/2, y: currentImage.size.height/2), forKey: kCIInputCenterKey)}
-        guard let endImage = context.createCGImage(filteredImage, from: filteredImage.extent) else { return }
-        let uiImage = UIImage(cgImage: endImage)
-//        let uiImage = UIImage(ciImage: filteredImage)
+        guard let cgImage = context.createCGImage(filteredImage, from: filteredImage.extent) else { return }
+        let uiImage = UIImage(cgImage: cgImage)
         imageView.image = uiImage
     }
     
@@ -110,11 +111,38 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let image = info[.editedImage] as? UIImage else { return }
-        currentImage = image
-        let beginImage = CIImage(image: currentImage)
-        currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
         dismiss(animated: true)
-        applyProcessing()
+        setFilterBeginImage(to: image)
+        if currentImage != nil {
+            fadeImageOut { [weak self] in
+                self?.currentImage = image
+                self?.applyProcessing()
+                self?.fadeImageIn()
+            }
+        } else {
+            currentImage = image
+            applyProcessing()
+            fadeImageIn()
+        }
+    }
+    
+    private func fadeImageOut(completion: @escaping () -> Void) {
+        UIView.animate(withDuration: 0.2) {
+            self.imageView.alpha = 0
+        } completion: { _ in
+            completion()
+        }
+    }
+    
+    private func fadeImageIn() {
+        imageView.alpha = 0
+        UIView.animate(withDuration: 0.2) {
+            self.imageView.alpha = 1
+        }
+    }
+    
+    private func setFilterBeginImage(to image: UIImage) {
+        currentFilter.setValue(CIImage(image: image), forKey: kCIInputImageKey)
     }
 }
 

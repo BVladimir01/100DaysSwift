@@ -103,7 +103,7 @@ class ViewController: UIViewController {
         NSLayoutConstraint.activate([
             currentAnswer.topAnchor.constraint(equalTo: answersLabel.bottomAnchor, constant: 20),
             currentAnswer.centerXAnchor.constraint(equalTo: view.layoutMarginsGuide.centerXAnchor),
-            currentAnswer.widthAnchor.constraint(equalTo: view.layoutMarginsGuide.widthAnchor, multiplier: 0.5)
+            currentAnswer.widthAnchor.constraint(equalTo: view.layoutMarginsGuide.widthAnchor, multiplier: 1)
         ])
     }
     
@@ -213,7 +213,10 @@ class ViewController: UIViewController {
     private func clearTapped(_ sender: UIButton? = nil) {
         currentAnswer.text = nil
         for button in activatedButtons {
-            button.isEnabled = true
+//            button.isEnabled = true
+            UIView.animate(withDuration: 0.3) {
+                button.alpha = 1
+            }
         }
         activatedButtons.removeAll()
     }
@@ -228,7 +231,10 @@ class ViewController: UIViewController {
         guard let answersText = answersLabel.text else { return }
         guard let guessedIndex = solutions.firstIndex(of: guessedWord) else {
             for button in activatedButtons {
-                button.isEnabled = true
+//                button.isEnabled = true
+                UIView.animate(withDuration: 0.3) {
+                    button.alpha = 1
+                }
             }
             showUnsuccessfulSubmit(for: guessedWord)
             score -= 1
@@ -258,7 +264,10 @@ class ViewController: UIViewController {
         solutions.removeAll(keepingCapacity: true)
         loadLevel()
         for button in letterButtons {
-            button.isEnabled = true
+//            button.isEnabled = true
+            UIView.animate(withDuration: 0.3) {
+                button.alpha = 1
+            }
         }
     }
 
@@ -266,7 +275,10 @@ class ViewController: UIViewController {
     private func lettersTapped(_ sender: UIButton) {
         guard let buttonTitle = sender.titleLabel?.text else { return }
         currentAnswer.text?.append(buttonTitle)
-        sender.isEnabled = false
+//        sender.isEnabled = false
+        UIView.animate(withDuration: 0.3) {
+            sender.alpha = 0
+        }
         activatedButtons.append(sender)
     }
 }

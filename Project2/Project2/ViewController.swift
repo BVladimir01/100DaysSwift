@@ -49,6 +49,11 @@ class ViewController: UIViewController {
     }
     
     @IBAction func buttonTapped(_ sender: UIButton) {
+        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: -0.5) {
+            sender.imageView?.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        } completion: { _ in
+            sender.imageView?.transform = .identity
+        }
         var title: String
         var message: String
         questionsAnswered += 1

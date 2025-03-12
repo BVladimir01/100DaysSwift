@@ -11,5 +11,5 @@ import UIKit
 struct CountryViewModel {
     let name: String
     let image: UIImage
-    let descriptiion: String
+    let description: String
 }

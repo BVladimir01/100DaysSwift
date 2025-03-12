@@ -9,10 +9,21 @@ import UIKit
 
 class CountryCell: UITableViewCell {
     
-    @IBOutlet var countryImageView: UIImageView!
+    @IBOutlet var countryImageView: UIImageView! {
+        didSet {
+            if countryImageView.image != nil {
+                activityIndicator.stopAnimating()
+            }
+        }
+    }
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var descriptionLabel: UILabel!
+    @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     
     static let reuseID = "CountryCell"
+    
+    func didLoadImage() {
+        activityIndicator.stopAnimating()
+    }
 
 }

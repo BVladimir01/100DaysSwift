@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct Country: Decodable, Identifiable, Encodable {
+struct Country: Decodable, Identifiable, Encodable, Hashable {
     
     var id: String {
         get {
@@ -89,7 +89,7 @@ extension Country: Equatable {
 }
 
 
-struct Location: Codable {
+struct Location: Codable, Hashable {
     let lat: Double
     let lon: Double
 }

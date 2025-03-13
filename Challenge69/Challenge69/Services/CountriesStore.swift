@@ -9,7 +9,11 @@ import Foundation
 
 class CountriesStore {
     
-    var countries: Set<Country> = []
+    var countries: [Country] = [] {
+        didSet {
+            store()
+        }
+    }
     
     private let storageKey: String = "Countries"
     private let storage = UserDefaults.standard
@@ -17,11 +21,11 @@ class CountriesStore {
     static let shared = CountriesStore()
     
     private init() {
-        guard let countriesData = storage.data(forKey: storageKey), let decodedCountries = try? JSONDecoder().decode(Set<Country>.self, from: countriesData) else { return }
+        guard let countriesData = storage.data(forKey: storageKey), let decodedCountries = try? JSONDecoder().decode([Country].self, from: countriesData) else { return }
         countries = decodedCountries
     }
     
-    func store() {
+    private func store() {
         guard let encodedCountries = try? JSONEncoder().encode(countries) else { return }
         storage.set(encodedCountries, forKey: storageKey)
     }

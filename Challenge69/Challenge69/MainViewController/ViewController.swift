@@ -93,6 +93,12 @@ extension ViewController: CountriesLoaderDelegate {
 
 extension ViewController: UITableViewDelegate {
     
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard editingStyle == .delete else { return }
+        countries.remove(at: indexPath.row)
+        tableView.deleteRows(at: [indexPath], with: .automatic)
+    }
+    
 }
 
 extension ViewController: UITableViewDataSource {

@@ -19,20 +19,20 @@ struct Country: Decodable, Identifiable, Encodable, Hashable {
     let imageURL: String
     var imageData: Data? = nil
     let thumbnailURL: String
-    var thumbnailImageData: Data? = nil
+    var thumbnailData: Data? = nil
     let briefDescription: String
     let location: Location
     let description: String
     
-    private struct ImageInfo: Decodable {
+    private struct ImageInfo: Codable {
         let source: String
     }
     
     enum CodingKeys: String, CodingKey {
         case name = "title"
-        case imageURL = "originalimage"
+        case imageInfo = "originalimage"
         case imageData
-        case thumbnailURL = "thumbnail"
+        case thumnailInfo = "thumbnail"
         case thumbnailData
         case briefDescription = "description"
         case description = "extract"
@@ -51,9 +51,15 @@ struct Country: Decodable, Identifiable, Encodable, Hashable {
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.name = try container.decode(String.self, forKey: .name)
-        self.briefDescription = try container.decode(String.self, forKey: .briefDescription)
-        self.description = try container.decode(String.self, forKey: .description)
+        name = try container.decode(String.self, forKey: .name)
+        imageData = try container.decodeIfPresent(Data.self, forKey: .imageData)
+        let thumbnailImageInfo = try container.decode(ImageInfo.self, forKey: .thumnailInfo)
+        thumbnailURL = thumbnailImageInfo.source
+        thumbnailData = try container.decodeIfPresent(Data.self, forKey: .thumbnailData)
+        let originalImageInfo = try container.decode(ImageInfo.self, forKey: .imageInfo)
+        imageURL = originalImageInfo.source
+        briefDescription = try container.decode(String.self, forKey: .briefDescription)
+        description = try container.decode(String.self, forKey: .description)
         if let location = try? container.decode(Location.self, forKey: .location) {
             self.location = location
         } else if let location = try? container.decode(Location.self, forKey: .coordinates) {
@@ -61,24 +67,21 @@ struct Country: Decodable, Identifiable, Encodable, Hashable {
         } else {
             throw DecodingError.locationError
         }
-        let thumbnailImageInfo = try container.decode(ImageInfo.self, forKey: .thumbnailURL)
-        self.thumbnailURL = thumbnailImageInfo.source
-        let originalImageInfo = try container.decode(ImageInfo.self, forKey: .imageURL)
-        self.imageURL = originalImageInfo.source
     }
     
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
-        try container.encode(imageURL, forKey: .imageURL)
+        try container.encode(ImageInfo(source: imageURL), forKey: .imageInfo)
         try container.encode(imageData, forKey: .imageData)
-        try container.encode(thumbnailURL, forKey: .thumbnailURL)
-        try container.encode(thumbnailImageData, forKey: .thumbnailData)
+        try container.encode(ImageInfo(source: thumbnailURL), forKey: .thumnailInfo)
+        try container.encode(thumbnailData, forKey: .thumbnailData)
         try container.encode(briefDescription, forKey: .briefDescription)
         try container.encode(description, forKey: .description)
         try container.encode(location, forKey: .location)
         try container.encode(location, forKey: .coordinates)
     }
+    
 }
 
 

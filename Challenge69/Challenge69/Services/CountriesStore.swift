@@ -21,12 +21,24 @@ class CountriesStore {
     static let shared = CountriesStore()
     
     private init() {
-        guard let countriesData = storage.data(forKey: storageKey), let decodedCountries = try? JSONDecoder().decode([Country].self, from: countriesData) else { return }
-        countries = decodedCountries
+        guard let countriesData = storage.data(forKey: storageKey) else {
+            print("failed to get data from storage")
+            return
+        }
+        do {
+            let decodedCountries = try JSONDecoder().decode([Country].self, from: countriesData)
+            countries = decodedCountries
+        } catch {
+            print(error)
+            print("----------------")
+        }
     }
     
     private func store() {
-        guard let encodedCountries = try? JSONEncoder().encode(countries) else { return }
+        guard let encodedCountries = try? JSONEncoder().encode(countries) else {
+            print("failed to encode and store countries")
+            return
+        }
         storage.set(encodedCountries, forKey: storageKey)
     }
 }

@@ -16,13 +16,16 @@ class CountryCell: UITableViewCell {
             }
         }
     }
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var descriptionLabel: UILabel!
+    @IBOutlet private var nameLabel: UILabel!
+    @IBOutlet private var descriptionLabel: UILabel!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     
     static let reuseID = "CountryCell"
-    
-    func didLoadImage() {
+
+    func configure(with viewModel: CountryViewModel) {
+        nameLabel.text = viewModel.name
+        descriptionLabel.text = viewModel.description
+        countryImageView.image = viewModel.image
         activityIndicator.stopAnimating()
     }
 

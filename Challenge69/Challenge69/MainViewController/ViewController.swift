@@ -53,14 +53,13 @@ class ViewController: UIViewController {
     
     private func configCell(_ cell: CountryCell, at indexPath: IndexPath) {
         let country = countries[indexPath.row]
-        cell.nameLabel.text = country.name
-        cell.nameLabel.sizeToFit()
-        cell.descriptionLabel.text = country.briefDescription
-        let request = URLRequest(url: URL(string: country.imageInfo.source)!)
+        let request = URLRequest(url: URL(string: country.thumbnailInfo.source)!)
         let task = URLSession.shared.data(for: request) { [weak cell] result in
             switch result {
             case .success(let data):
-                cell?.countryImageView.image = UIImage(data: data)
+                let image = UIImage(data: data)!
+                let viewModel = CountryViewModel(name: country.name, image: image, description: country.briefDescription)
+                cell?.configure(with: viewModel)
             case .failure(let error):
                 print(error)
             }

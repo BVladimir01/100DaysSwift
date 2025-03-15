@@ -26,8 +26,8 @@ class ViewController: UIViewController {
     }
     
     private var testCountries: [Country] = [
-        .init(name: "Germany", imageURL: "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/1000px-Flag_of_Germany.svg.png", thumbnailURL: "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/320px-Flag_of_Germany.svg.png", descriptionBrief: "Country in Central Europe", location: .init(lat: 51, lon: 9), description: "Germany, officially the Federal Republic of Germany, is a country in Central Europe. It lies between the Baltic Sea and the North Sea to the north and the Alps to the south. Its sixteen constituent states have a total population of over 82 million in an area of 357,596 km2 (138,069 sq mi), making it the most populous member state of the European Union. It borders Denmark to the north, Poland and the Czech Republic to the east, Austria and Switzerland to the south, and France, Luxembourg, Belgium, and the Netherlands to the west. The nation's capital and most populous city is Berlin and its main financial centre is Frankfurt; the largest urban area is the Ruhr."),
-        .init(name: "Russia", imageURL: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f3/Flag_of_Russia.svg/900px-Flag_of_Russia.svg.png", thumbnailURL: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f3/Flag_of_Russia.svg/320px-Flag_of_Russia.svg.png", descriptionBrief: "Country spanning Europe and Asia", location: .init(lat: 66, lon: 94), description: "Russia, or the Russian Federation, is a country spanning Eastern Europe and North Asia. It is the largest country in the world by land area, and extends across eleven time zones; sharing land borders with fourteen countries. Russia is the most populous country in Europe and the ninth-most populous country in the world. It is a highly urbanised country, with sixteen of its urban areas having more than 1 million inhabitants. Moscow, the most populous metropolitan area in Europe, is the capital and largest city of Russia, while Saint Petersburg is its second-largest city and cultural centre.")
+        Country(name: "Croatia", imageInfo: ImageInfo(source: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Flag_of_Croatia.svg/1200px-Flag_of_Croatia.svg.png", width: 1200, height: 600), thumbnailInfo: ImageInfo(source: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Flag_of_Croatia.svg/320px-Flag_of_Croatia.svg.png", width: 320, height: 160), briefDescription: "Country in Central and Southeast Europe", location: Location(lat: 45.16666667, lon: 15.5), description: "Croatia, officially the Republic of Croatia, is a country in Central and Southeast Europe, on the coast of the Adriatic Sea. It borders Slovenia to the northwest, Hungary to the northeast, Serbia to the east, Bosnia and Herzegovina and Montenegro to the southeast, and shares a maritime border with Italy to the west. Its capital and largest city, Zagreb, forms one of the country's primary subdivisions, with twenty counties. Other major urban centers include Split, Rijeka and Osijek. The country spans 56,594 square kilometres, and has a population of nearly 3.9 million.)"),
+        Country(name: "Japan", imageInfo: ImageInfo(source: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/900px-Flag_of_Japan.svg.png", width: 900, height: 600), thumbnailInfo: ImageInfo(source: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/320px-Flag_of_Japan.svg.png", width: 320, height: 213), briefDescription: "Island country in East Asia", location: Location(lat: 36, lon: 138), description: "Japan is an island country in East Asia. Located in the Pacific Ocean off the northeast coast of the Asian mainland, it is bordered on the west by the Sea of Japan and extends from the Sea of Okhotsk in the north to the East China Sea in the south. The Japanese archipelago consists of four major islands—Hokkaido, Honshu, Shikoku, and Kyushu—and thousands of smaller islands, covering 377,975 square kilometers (145,937 sq mi). Japan has a population of over 123 million as of 2025, making it the eleventh-most populous country.")
     ]
     
     override func viewDidLoad() {
@@ -35,6 +35,7 @@ class ViewController: UIViewController {
         countriesLoader.delegate = self
         setupTableView()
         setupNavigationBar()
+//        countries = testCountries
         print(countries)
     }
     
@@ -55,7 +56,7 @@ class ViewController: UIViewController {
         cell.nameLabel.text = country.name
         cell.nameLabel.sizeToFit()
         cell.descriptionLabel.text = country.briefDescription
-        let request = URLRequest(url: URL(string: country.thumbnailURL)!)
+        let request = URLRequest(url: URL(string: country.imageInfo.source)!)
         let task = URLSession.shared.data(for: request) { [weak cell] result in
             switch result {
             case .success(let data):

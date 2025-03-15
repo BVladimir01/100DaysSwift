@@ -16,17 +16,13 @@ struct Country: Decodable, Identifiable, Encodable, Hashable {
     }
     
     let name: String
-    let imageURL: String
+    let imageInfo: ImageInfo
     var imageData: Data? = nil
-    let thumbnailURL: String
+    let thumbnailInfo: ImageInfo
     var thumbnailData: Data? = nil
     let briefDescription: String
     let location: Location
     let description: String
-    
-    private struct ImageInfo: Codable {
-        let source: String
-    }
     
     enum CodingKeys: String, CodingKey {
         case name = "title"
@@ -40,11 +36,13 @@ struct Country: Decodable, Identifiable, Encodable, Hashable {
         case coordinates
     }
     
-    init(name: String, imageURL: String, thumbnailURL: String, descriptionBrief: String, location: Location, description: String) {
+    init(name: String, imageInfo: ImageInfo, imageData: Data? = nil, thumbnailInfo: ImageInfo, thumbnailData: Data? = nil, briefDescription: String, location: Location, description: String) {
         self.name = name
-        self.imageURL = imageURL
-        self.thumbnailURL = thumbnailURL
-        self.briefDescription = descriptionBrief
+        self.imageInfo = imageInfo
+        self.imageData = imageData
+        self.thumbnailInfo = thumbnailInfo
+        self.thumbnailData = thumbnailData
+        self.briefDescription = briefDescription
         self.location = location
         self.description = description
     }
@@ -53,11 +51,9 @@ struct Country: Decodable, Identifiable, Encodable, Hashable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
         imageData = try container.decodeIfPresent(Data.self, forKey: .imageData)
-        let thumbnailImageInfo = try container.decode(ImageInfo.self, forKey: .thumnailInfo)
-        thumbnailURL = thumbnailImageInfo.source
+        imageInfo = try container.decode(ImageInfo.self, forKey: .imageInfo)
+        thumbnailInfo = try container.decode(ImageInfo.self, forKey: .thumnailInfo)
         thumbnailData = try container.decodeIfPresent(Data.self, forKey: .thumbnailData)
-        let originalImageInfo = try container.decode(ImageInfo.self, forKey: .imageInfo)
-        imageURL = originalImageInfo.source
         briefDescription = try container.decode(String.self, forKey: .briefDescription)
         description = try container.decode(String.self, forKey: .description)
         if let location = try? container.decode(Location.self, forKey: .location) {
@@ -72,9 +68,9 @@ struct Country: Decodable, Identifiable, Encodable, Hashable {
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
-        try container.encode(ImageInfo(source: imageURL), forKey: .imageInfo)
+        try container.encode(imageInfo, forKey: .imageInfo)
         try container.encode(imageData, forKey: .imageData)
-        try container.encode(ImageInfo(source: thumbnailURL), forKey: .thumnailInfo)
+        try container.encode(thumbnailInfo, forKey: .thumnailInfo)
         try container.encode(thumbnailData, forKey: .thumbnailData)
         try container.encode(briefDescription, forKey: .briefDescription)
         try container.encode(description, forKey: .description)
@@ -95,6 +91,12 @@ extension Country: Equatable {
 struct Location: Codable, Hashable {
     let lat: Double
     let lon: Double
+}
+
+struct ImageInfo: Codable, Hashable {
+    let source: String
+    let width: Int
+    let height: Int
 }
 
 

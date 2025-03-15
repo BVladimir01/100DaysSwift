@@ -152,7 +152,7 @@
                     <navigationItem key="navigationItem" id="Egg-EF-pRQ"/>
                     <connections>
                         <outlet property="briefDescriptionLabel" destination="2uc-Ia-vLC" id="qEn-lh-UkH"/>
-                        <outlet property="countryImageView" destination="yXs-Oo-bPm" id="42s-vI-POR"/>
+                        <outlet property="countryImageView" destination="yXs-Oo-bPm" id="eMT-fY-Ayo"/>
                         <outlet property="descriptionTextView" destination="XGJ-PQ-foQ" id="1tV-A9-9TC"/>
                         <outlet property="locationLabel" destination="qd4-mz-lL3" id="TKj-rw-fFG"/>
                     </connections>

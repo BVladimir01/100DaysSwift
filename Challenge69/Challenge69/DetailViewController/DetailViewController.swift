@@ -14,9 +14,14 @@ class DetailViewController: UIViewController {
     @IBOutlet var descriptionTextView: UITextView!
     @IBOutlet var locationLabel: UILabel!
     
+    var viewModel: CountryDetailViewModel?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
+        if let viewModel {
+            configure(with: viewModel)
+        }
     }
     
     func configure(with viewModel: CountryDetailViewModel) {

@@ -12,6 +12,7 @@ class CountriesStore {
     var countries: [Country] = [] {
         didSet {
             store()
+            print("Stored")
         }
     }
     

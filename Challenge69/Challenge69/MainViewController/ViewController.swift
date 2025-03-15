@@ -38,7 +38,6 @@ class ViewController: UIViewController {
         setupTableView()
         setupNavigationBar()
 //        countries = testCountries
-        print(countries)
     }
     
     private func setupTableView() {
@@ -54,19 +53,27 @@ class ViewController: UIViewController {
     }
     
     private func configCell(_ cell: CountryCell, at indexPath: IndexPath) {
-        let country = countries[indexPath.row]
-        let request = URLRequest(url: URL(string: country.thumbnailInfo.source)!)
-        let task = URLSession.shared.data(for: request) { [weak cell] result in
-            switch result {
-            case .success(let data):
-                let image = UIImage(data: data)!
-                let viewModel = CountryViewModel(name: country.name, image: image, description: country.briefDescription)
-                cell?.configure(with: viewModel)
-            case .failure(let error):
-                print(error)
+        var country = countries[indexPath.row]
+        if let imageData = country.thumbnailData {
+            let image = UIImage(data: imageData)!
+            let viewModel = CountryViewModel(name: country.name, image: image, description: country.briefDescription)
+            cell.configure(with: viewModel)
+        } else {
+            let request = URLRequest(url: URL(string: country.thumbnailInfo.source)!)
+            let task = URLSession.shared.data(for: request) { [weak cell, weak self] result in
+                switch result {
+                case .success(let data):
+                    country.thumbnailData = data
+                    self?.countries[indexPath.row] = country
+                    let image = UIImage(data: data)!
+                    let viewModel = CountryViewModel(name: country.name, image: image, description: country.briefDescription)
+                    cell?.configure(with: viewModel)
+                case .failure(let error):
+                    print(error)
+                }
             }
+            task.resume()
         }
-        task.resume()
     }
     
     @objc
@@ -110,19 +117,27 @@ extension ViewController: UITableViewDelegate {
             assertionFailure("Failed to create DetailVc or extract cell or extract indexPath")
             return
         }
-        let country = countries[indexPath.row]
-        let reqest = URLRequest(url: URL(string: country.imageInfo.source)!)
-        let task = URLSession.shared.data(for: reqest) { result in
-            switch result {
-            case .success(let data):
-                let image = UIImage(data: data)!
-                let viewModel = CountryDetailViewModel(name: country.name, image: image, briefDescription: country.briefDescription, description: country.description, location: country.location)
-                detailVC.configure(with: viewModel)
-            case .failure(let error):
-                print(error)
+        var country = countries[indexPath.row]
+        if let imageData = country.imageData {
+            let image = UIImage(data: imageData)!
+            let viewModel = CountryDetailViewModel(name: country.name, image: image, briefDescription: country.briefDescription, description: country.description, location: country.location)
+            detailVC.viewModel = viewModel
+        } else {
+            let reqest = URLRequest(url: URL(string: country.imageInfo.source)!)
+            let task = URLSession.shared.data(for: reqest) { [weak self] result in
+                switch result {
+                case .success(let data):
+                    let image = UIImage(data: data)!
+                    country.imageData = data
+                    self?.countries[indexPath.row] = country
+                    let viewModel = CountryDetailViewModel(name: country.name, image: image, briefDescription: country.briefDescription, description: country.description, location: country.location)
+                    detailVC.viewModel = viewModel
+                case .failure(let error):
+                    print(error)
+                }
             }
+            task.resume()
         }
-        task.resume()
     }
 
 }

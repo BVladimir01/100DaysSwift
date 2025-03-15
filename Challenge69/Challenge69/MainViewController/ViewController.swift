@@ -12,6 +12,8 @@ class ViewController: UIViewController {
     
     @IBOutlet private var tableView: UITableView!
     
+    private let showDetailSegueID = "ShowContryDetail"
+    
     private let countriesLoader = CountriesLoader()
     
     private let storage = CountriesStore.shared
@@ -82,6 +84,7 @@ class ViewController: UIViewController {
     }
 }
 
+
 extension ViewController: CountriesLoaderDelegate {
     func didFetchCountry(_ country: Country) {
         if !countries.contains(country) {
@@ -91,6 +94,7 @@ extension ViewController: CountriesLoaderDelegate {
     }
 }
 
+
 extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -99,7 +103,30 @@ extension ViewController: UITableViewDelegate {
         tableView.deleteRows(at: [indexPath], with: .automatic)
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        defer { super.prepare(for: segue, sender: sender) }
+        guard segue.identifier == showDetailSegueID else { return }
+        guard let detailVC = segue.destination as? DetailViewController, let cell = sender as? CountryCell, let indexPath = tableView.indexPath(for: cell) else {
+            assertionFailure("Failed to create DetailVc or extract cell or extract indexPath")
+            return
+        }
+        let country = countries[indexPath.row]
+        let reqest = URLRequest(url: URL(string: country.imageInfo.source)!)
+        let task = URLSession.shared.data(for: reqest) { result in
+            switch result {
+            case .success(let data):
+                let image = UIImage(data: data)!
+                let viewModel = CountryDetailViewModel(name: country.name, image: image, briefDescription: country.briefDescription, description: country.description, location: country.location)
+                detailVC.configure(with: viewModel)
+            case .failure(let error):
+                print(error)
+            }
+        }
+        task.resume()
+    }
+
 }
+
 
 extension ViewController: UITableViewDataSource {
     

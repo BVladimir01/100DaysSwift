@@ -8,22 +8,25 @@
 import UIKit
 
 class DetailViewController: UIViewController {
-
+    
+    @IBOutlet var countryImageView: UIImageView!
+    @IBOutlet var briefDescriptionLabel: UILabel!
+    @IBOutlet var descriptionTextView: UITextView!
+    @IBOutlet var locationLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        navigationItem.largeTitleDisplayMode = .never
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func configure(with viewModel: CountryDetailViewModel) {
+        countryImageView.image = viewModel.image
+        briefDescriptionLabel.text = viewModel.briefDescription
+        descriptionTextView.text = viewModel.description
+        locationLabel.text = "Location: (lat: \(viewModel.location.lat.prettyRounded(to: 2)), lon: \(viewModel.location.lon.prettyRounded(to: 2))"
+        navigationItem.title = viewModel.name
     }
-    */
 
 }
+
+

@@ -14,24 +14,26 @@ class DetailViewController: UIViewController {
     @IBOutlet var descriptionTextView: UITextView!
     @IBOutlet var locationLabel: UILabel!
     
-    var viewModel: CountryDetailViewModel?
+    var viewModel: CountryDetailViewModel? {
+        didSet {
+            configure()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
-        if let viewModel {
-            configure(with: viewModel)
-        }
+        configure()
     }
     
-    func configure(with viewModel: CountryDetailViewModel) {
+    private func configure() {
+        guard let viewModel, self.isViewLoaded else { return }
         countryImageView.image = viewModel.image
         briefDescriptionLabel.text = viewModel.briefDescription
         descriptionTextView.text = viewModel.description
-        locationLabel.text = "Location: (lat: \(viewModel.location.lat.prettyRounded(to: 2)), lon: \(viewModel.location.lon.prettyRounded(to: 2))"
+        locationLabel.text = "Location: (lat: \(viewModel.location.lat.prettyRounded(to: 2)), lon: \(viewModel.location.lon.prettyRounded(to: 2)))"
         navigationItem.title = viewModel.name
     }
-
 }
 
 

@@ -21,32 +21,32 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CountryCell" id="b2k-Kq-Od5" customClass="CountryCell" customModule="Challenge69" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="50" width="393" height="42.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="50" width="393" height="43.333332061767578"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="b2k-Kq-Od5" id="Qlh-F0-ubE">
-                                            <rect key="frame" x="0.0" y="0.0" width="362.66666666666669" height="42.666667938232422"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="362.66666666666669" height="43.333332061767578"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="i8M-1a-C2u">
-                                                    <rect key="frame" x="20" y="11.000000000000002" width="32" height="20.666666666666671"/>
+                                                    <rect key="frame" x="20" y="10.999999999999998" width="32" height="21.333333333333329"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="32" id="AE0-MW-kMm"/>
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XNo-1D-iuP">
-                                                    <rect key="frame" x="62" y="11.000000000000002" width="45" height="20.666666666666671"/>
+                                                    <rect key="frame" x="62" y="10.999999999999998" width="45" height="21.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="251" horizontalCompressionResistancePriority="250" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DYu-lN-Pwv">
-                                                    <rect key="frame" x="267.33333333333331" y="11.000000000000002" width="87.333333333333314" height="20.666666666666671"/>
+                                                    <rect key="frame" x="267.33333333333331" y="10.999999999999998" width="87.333333333333314" height="21.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="C5T-PO-Pg1">
-                                                    <rect key="frame" x="26" y="11.333333333333336" width="20" height="20"/>
+                                                    <rect key="frame" x="26" y="11.666666666666664" width="20" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="C5T-PO-Pg1" secondAttribute="height" multiplier="1:1" id="ihV-Zr-C2d"/>
                                                     </constraints>
@@ -73,7 +73,6 @@
                                             <outlet property="countryImageView" destination="i8M-1a-C2u" id="SBU-qW-Yha"/>
                                             <outlet property="descriptionLabel" destination="DYu-lN-Pwv" id="nfQ-HB-CcX"/>
                                             <outlet property="nameLabel" destination="XNo-1D-iuP" id="d4I-uN-Z6R"/>
-                                            <segue destination="dCL-ok-EPI" kind="show" identifier="ShowContryDetail" id="Vzs-JL-mq9"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -100,32 +99,32 @@
         <!--Detail View Controller-->
         <scene sceneID="b3N-Kx-Qp5">
             <objects>
-                <viewController id="dCL-ok-EPI" customClass="DetailViewController" customModule="Challenge69" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CountryDetailVC" id="dCL-ok-EPI" customClass="DetailViewController" customModule="Challenge69" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Cba-9r-Krw">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yXs-Oo-bPm">
-                                <rect key="frame" x="0.0" y="103" width="393" height="262"/>
+                                <rect key="frame" x="0.0" y="59" width="393" height="262"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="yXs-Oo-bPm" secondAttribute="height" multiplier="3:2" id="OrC-nd-3m3"/>
                                 </constraints>
                             </imageView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Country Description" translatesAutoresizingMaskIntoConstraints="NO" id="XGJ-PQ-foQ">
-                                <rect key="frame" x="16" y="463" width="361" height="355"/>
+                                <rect key="frame" x="16" y="419" width="361" height="399"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Country location" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qd4-mz-lL3">
-                                <rect key="frame" x="0.0" y="410" width="393" height="21"/>
+                                <rect key="frame" x="0.0" y="366" width="393" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Country brief description" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2uc-Ia-vLC">
-                                <rect key="frame" x="0.0" y="381" width="393" height="21"/>
+                                <rect key="frame" x="0.0" y="337" width="393" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>

@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     
     @IBOutlet private var tableView: UITableView!
     
-    private let showDetailSegueID = "ShowContryDetail"
+    private let showDetailSegueID = "ShowDetail"
     
     private let countriesLoader = CountriesLoader()
     
@@ -104,17 +104,9 @@ extension ViewController: CountriesLoaderDelegate {
 
 extension ViewController: UITableViewDelegate {
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        guard editingStyle == .delete else { return }
-        countries.remove(at: indexPath.row)
-        tableView.deleteRows(at: [indexPath], with: .automatic)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        defer { super.prepare(for: segue, sender: sender) }
-        guard segue.identifier == showDetailSegueID else { return }
-        guard let detailVC = segue.destination as? DetailViewController, let cell = sender as? CountryCell, let indexPath = tableView.indexPath(for: cell) else {
-            assertionFailure("Failed to create DetailVc or extract cell or extract indexPath")
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let detailVC = storyboard?.instantiateViewController(withIdentifier: DetailViewController.StoryboardID) as? DetailViewController, let navigationController else {
+            assertionFailure("Failed to create detailVC or get Navigation controller")
             return
         }
         var country = countries[indexPath.row]
@@ -122,6 +114,8 @@ extension ViewController: UITableViewDelegate {
             let image = UIImage(data: imageData)!
             let viewModel = CountryDetailViewModel(name: country.name, image: image, briefDescription: country.briefDescription, description: country.description, location: country.location)
             detailVC.viewModel = viewModel
+            tableView.deselectRow(at: indexPath, animated: true)
+            navigationController.pushViewController(detailVC, animated: true)
         } else {
             let reqest = URLRequest(url: URL(string: country.imageInfo.source)!)
             let task = URLSession.shared.data(for: reqest) { [weak self] result in
@@ -132,12 +126,20 @@ extension ViewController: UITableViewDelegate {
                     self?.countries[indexPath.row] = country
                     let viewModel = CountryDetailViewModel(name: country.name, image: image, briefDescription: country.briefDescription, description: country.description, location: country.location)
                     detailVC.viewModel = viewModel
+                    tableView.deselectRow(at: indexPath, animated: true)
+                    navigationController.pushViewController(detailVC, animated: true)
                 case .failure(let error):
                     print(error)
                 }
             }
             task.resume()
         }
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard editingStyle == .delete else { return }
+        countries.remove(at: indexPath.row)
+        tableView.deleteRows(at: [indexPath], with: .automatic)
     }
 
 }

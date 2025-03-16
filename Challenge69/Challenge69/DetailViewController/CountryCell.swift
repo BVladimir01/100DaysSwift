@@ -13,6 +13,8 @@ class CountryCell: UITableViewCell {
         didSet {
             if countryImageView.image != nil {
                 activityIndicator.stopAnimating()
+            } else {
+                activityIndicator.startAnimating()
             }
         }
     }
@@ -21,6 +23,12 @@ class CountryCell: UITableViewCell {
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     
     static let reuseID = "CountryCell"
+    
+    override func prepareForReuse() {
+        nameLabel.text = nil
+        descriptionLabel.text = nil
+        countryImageView.image = nil
+    }
 
     func configure(with viewModel: CountryViewModel) {
         nameLabel.text = viewModel.name

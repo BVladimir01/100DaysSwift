@@ -13,7 +13,8 @@ protocol CountriesLoaderProtocol {
 }
 
 protocol CountriesLoaderDelegate: AnyObject {
-    func didFetchCountry(_ country: Country)
+    func didFetch(_ country: Country)
+    func failedToFetch(_ country: String)
 }
 
 class CountriesLoader: CountriesLoaderProtocol {
@@ -29,12 +30,14 @@ class CountriesLoader: CountriesLoaderProtocol {
             case .success(let data):
                 do {
                     let country = try JSONDecoder().decode(Country.self, from: data)
-                    self?.delegate?.didFetchCountry(country)
+                    self?.delegate?.didFetch(country)
                 } catch {
                     print(error)
+                    self?.delegate?.failedToFetch(name)
                 }
             case .failure(let error):
                 print(error)
+                self?.delegate?.failedToFetch(name)
             }
         }
         task.resume()

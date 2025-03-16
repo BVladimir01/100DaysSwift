@@ -35,7 +35,6 @@ class DetailViewController: UIViewController {
         descriptionTextView.text = viewModel.description
         locationLabel.text = "Location: (lat: \(viewModel.location.lat.prettyRounded(to: 2)), lon: \(viewModel.location.lon.prettyRounded(to: 2)))"
         navigationItem.title = viewModel.name
-//        view.layoutIfNeeded()
     }
 }
 

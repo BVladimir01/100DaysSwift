@@ -27,17 +27,33 @@ class ViewController: UIViewController {
         }
     }
     
-    private var testCountries: [Country] = [
-        Country(name: "Croatia", imageInfo: ImageInfo(source: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Flag_of_Croatia.svg/1200px-Flag_of_Croatia.svg.png", width: 1200, height: 600), thumbnailInfo: ImageInfo(source: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Flag_of_Croatia.svg/320px-Flag_of_Croatia.svg.png", width: 320, height: 160), briefDescription: "Country in Central and Southeast Europe", location: Location(lat: 45.16666667, lon: 15.5), description: "Croatia, officially the Republic of Croatia, is a country in Central and Southeast Europe, on the coast of the Adriatic Sea. It borders Slovenia to the northwest, Hungary to the northeast, Serbia to the east, Bosnia and Herzegovina and Montenegro to the southeast, and shares a maritime border with Italy to the west. Its capital and largest city, Zagreb, forms one of the country's primary subdivisions, with twenty counties. Other major urban centers include Split, Rijeka and Osijek. The country spans 56,594 square kilometres, and has a population of nearly 3.9 million.)"),
-        Country(name: "Japan", imageInfo: ImageInfo(source: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/900px-Flag_of_Japan.svg.png", width: 900, height: 600), thumbnailInfo: ImageInfo(source: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/320px-Flag_of_Japan.svg.png", width: 320, height: 213), briefDescription: "Island country in East Asia", location: Location(lat: 36, lon: 138), description: "Japan is an island country in East Asia. Located in the Pacific Ocean off the northeast coast of the Asian mainland, it is bordered on the west by the Sea of Japan and extends from the Sea of Okhotsk in the north to the East China Sea in the south. The Japanese archipelago consists of four major islands—Hokkaido, Honshu, Shikoku, and Kyushu—and thousands of smaller islands, covering 377,975 square kilometers (145,937 sq mi). Japan has a population of over 123 million as of 2025, making it the eleventh-most populous country.")
-    ]
+    private var sorting: Sorting = .default
+    
+    private var sortedCountries: [Country] {
+        switch sorting {
+        case .default:
+            return countries
+        case .name:
+            return countries.sorted(using: SortDescriptor(\.name, comparator: .lexical))
+        case .location:
+            return countries.sorted { country1, country2 in
+                if country1.location.lat < country2.location.lat {
+                    return true
+                } else if country1.location.lat > country2.location.lat {
+                    return false
+                } else  {
+                    return country1.location.lon < country2.location.lon
+                }
+            }
+        }
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         countriesLoader.delegate = self
         setupTableView()
         setupNavigationBar()
-//        countries = testCountries
     }
     
     private func setupTableView() {
@@ -93,11 +109,18 @@ class ViewController: UIViewController {
 
 
 extension ViewController: CountriesLoaderDelegate {
-    func didFetchCountry(_ country: Country) {
+    
+    func didFetch(_ country: Country) {
         if !countries.contains(country) {
             countries.append(country)
             tableView.insertRows(at: [IndexPath(row: countries.count - 1, section: 0)], with: .automatic)
         }
+    }
+    
+    func failedToFetch(_ country: String) {
+        let ac = UIAlertController(title: "Failed to find country '\(country)'", message: nil, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Ok", style: .default))
+        present(ac, animated: true)
     }
 }
 
@@ -159,4 +182,9 @@ extension ViewController: UITableViewDataSource {
         return cell
     }
     
+}
+
+
+enum Sorting: String {
+    case `default`, name, location
 }

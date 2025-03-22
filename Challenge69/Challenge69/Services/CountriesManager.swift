@@ -5,10 +5,17 @@
 //  Created by Vladimir on 22.03.2025.
 //
 
+import UIKit
+
 class CountriesManager {
     private let store = CountriesStore.shared
-    var sorting: Sorting = .date
-    var order: Order = .ascending
+    
+    var sorting: Sorting = .date {
+        didSet { save() }
+    }
+    var order: Order = .ascending {
+        didSet { save() }
+    }
     
     var countries: [Country] {
         get {
@@ -38,12 +45,48 @@ class CountriesManager {
     
     var sortingCases = Sorting.allCases
     
-    enum Sorting: String, CaseIterable {
+    enum Sorting: String, CaseIterable, Codable {
         case date = "adding date", name, location
     }
     
-    enum Order {
+    enum Order: Codable {
         case ascending, descending
     }
     
+    private func save() {
+        let encoder = JSONEncoder()
+        do {
+            let sortingData = try encoder.encode(sorting)
+            let orderData = try encoder.encode(order)
+            storage.set(sortingData, forKey: StorageKeys.sorting)
+            storage.set(orderData, forKey: StorageKeys.order)
+        } catch {
+            print(error)
+        }
+    }
+    
+    private func load() {
+        let decoder = JSONDecoder()
+        if let sortingData = storage.data(forKey: StorageKeys.sorting), let orderData = storage.data(forKey: StorageKeys.order) {
+            do {
+                let sorting = try JSONDecoder().decode(Sorting.self, from: sortingData)
+                let order = try JSONDecoder().decode(Order.self, from: orderData)
+                self.sorting = sorting
+                self.order = order
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    private let storage = UserDefaults.standard
+    private struct StorageKeys {
+        private init() { }
+        static let sorting = "sortingKey"
+        static let order = "orderKey"
+    }
+    
+    init() {
+        load()
+    }
 }

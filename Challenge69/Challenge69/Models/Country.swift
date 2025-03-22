@@ -88,9 +88,17 @@ extension Country: Equatable {
 }
 
 
-struct Location: Codable, Hashable {
+struct Location: Codable, Hashable, Comparable {
     let lat: Double
     let lon: Double
+    
+    static func < (lhs: Location, rhs: Location) -> Bool {
+        if abs(lhs.lat - rhs.lat) < 0.000_01 {
+            return lhs.lon  < rhs.lon
+        } else {
+            return lhs.lat < rhs.lat
+        }
+    }
 }
 
 struct ImageInfo: Codable, Hashable {

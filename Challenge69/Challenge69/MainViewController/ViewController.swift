@@ -16,14 +16,14 @@ class ViewController: UIViewController {
     
     private let countriesLoader = CountriesLoader()
     
-    private let storage = CountriesStore.shared
+    private let countriesManager = CountriesManager()
     
     private var countries: [Country] {
         get {
-            storage.countries
+            countriesManager.countries
         }
         set {
-            storage.countries = newValue
+            countriesManager.countries = newValue
         }
     }
     
@@ -65,7 +65,41 @@ class ViewController: UIViewController {
     private func setupNavigationBar() {
         title = "Countries"
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(Self.addCountry))
+        setupAddButton()
+        setupSortingMenu()
+    }
+    
+    private func setupSortingMenu() {
+        let sortingMenus = countriesManager.sortingCases.map { sorting in
+            UIMenu(title: sorting.rawValue, options: [.singleSelection], children: [
+                UIAction(title: "Ascending", image: UIImage(systemName: "arrow.up.circle")) { [weak self] _ in
+                    self?.countriesManager.order = .ascending
+                    self?.countriesManager.sorting = sorting
+                    self?.tableView.reloadData()
+                },
+                UIAction(title: "Descending", image: UIImage(systemName: "arrow.down.circle")) { [weak self] _ in
+                    self?.countriesManager.order = .descending
+                    self?.countriesManager.sorting = sorting
+                    self?.tableView.reloadData()
+                }
+            ])
+        }
+        let menu = UIMenu(title: "Sort by", options: [.singleSelection], children: sortingMenus)
+        let item = UIBarButtonItem(title: "Sorting", image: UIImage(systemName: "arrow.up.arrow.down"), primaryAction: nil, menu: menu)
+        if navigationItem.rightBarButtonItems != nil {
+            navigationItem.rightBarButtonItems?.append(item)
+        } else {
+            navigationItem.rightBarButtonItems = [item]
+        }
+    }
+    
+    private func setupAddButton() {
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(Self.addCountry))
+        if navigationItem.rightBarButtonItems != nil {
+            navigationItem.rightBarButtonItems?.append(addButton)
+        } else {
+            navigationItem.rightBarButtonItems = [addButton]
+        }
     }
     
     private func configCell(_ cell: CountryCell, at indexPath: IndexPath) {
@@ -113,7 +147,11 @@ extension ViewController: CountriesLoaderDelegate {
     func didFetch(_ country: Country) {
         if !countries.contains(country) {
             countries.append(country)
-            tableView.insertRows(at: [IndexPath(row: countries.count - 1, section: 0)], with: .automatic)
+            if let id = countriesManager.countries.firstIndex(of: country) {
+                tableView.insertRows(at: [IndexPath(row: id, section: 0)], with: .automatic)
+            } else {
+                tableView.reloadData()
+            }
         }
     }
     

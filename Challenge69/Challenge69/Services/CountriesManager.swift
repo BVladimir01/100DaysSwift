@@ -38,9 +38,6 @@ class CountriesManager {
                 return res.reversed()
             }
         }
-        set {
-            store.countries = newValue
-        }
     }
     
     var sortingCases = Sorting.allCases
@@ -98,5 +95,11 @@ class CountriesManager {
     
     func add(country: Country) {
         self.store.countries.append(country)
+    }
+    
+    func modify(country: Country) {
+        if let id = store.countries.firstIndex(where: { $0.name == country.name }) {
+            store.countries[id] = country
+        }
     }
 }

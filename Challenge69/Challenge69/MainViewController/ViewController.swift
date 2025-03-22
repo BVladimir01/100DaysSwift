@@ -22,9 +22,6 @@ class ViewController: UIViewController {
         get {
             countriesManager.countries
         }
-        set {
-            countriesManager.countries = newValue
-        }
     }
     
     private var sorting: Sorting = .default
@@ -114,7 +111,7 @@ class ViewController: UIViewController {
                 switch result {
                 case .success(let data):
                     country.thumbnailData = data
-                    self?.countries[indexPath.row] = country
+                    self?.countriesManager.modify(country: country)
                     let image = UIImage(data: data)!
                     let viewModel = CountryViewModel(name: country.name, image: image, description: country.briefDescription)
                     cell?.configure(with: viewModel)
@@ -156,6 +153,7 @@ extension ViewController: CountriesLoaderDelegate {
                 tableView.reloadData()
             }
         }
+        print(countries.map({ $0.name }))
     }
     
     func failedToFetch(_ country: String) {
@@ -174,9 +172,9 @@ extension ViewController: UITableViewDelegate {
             return
         }
         print(countriesManager.order)
-        print(countriesManager.countries.map({ $0.name }))
+        print(countries.map({ $0.name }))
         print(indexPath.row)
-        var country = countriesManager.countries[indexPath.row]
+        var country = countries[indexPath.row]
         print(country.name)
         if let imageData = country.imageData {
             let image = UIImage(data: imageData)!
@@ -191,7 +189,7 @@ extension ViewController: UITableViewDelegate {
                 case .success(let data):
                     let image = UIImage(data: data)!
                     country.imageData = data
-                    self?.countries[indexPath.row] = country
+                    self?.countriesManager.modify(country: country)
                     let viewModel = CountryDetailViewModel(name: country.name, image: image, briefDescription: country.briefDescription, description: country.description, location: country.location)
                     detailVC.viewModel = viewModel
                     tableView.deselectRow(at: indexPath, animated: true)

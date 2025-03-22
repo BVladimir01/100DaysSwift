@@ -69,8 +69,8 @@ class CountriesManager {
         let decoder = JSONDecoder()
         if let sortingData = storage.data(forKey: StorageKeys.sorting), let orderData = storage.data(forKey: StorageKeys.order) {
             do {
-                let sorting = try JSONDecoder().decode(Sorting.self, from: sortingData)
-                let order = try JSONDecoder().decode(Order.self, from: orderData)
+                let sorting = try decoder.decode(Sorting.self, from: sortingData)
+                let order = try decoder.decode(Order.self, from: orderData)
                 self.sorting = sorting
                 self.order = order
             } catch {
@@ -88,5 +88,15 @@ class CountriesManager {
     
     init() {
         load()
+    }
+    
+    func remove(country: Country) {
+        if let id = store.countries.firstIndex(of: country) {
+            store.countries.remove(at: id)
+        }
+    }
+    
+    func add(country: Country) {
+        self.store.countries.append(country)
     }
 }

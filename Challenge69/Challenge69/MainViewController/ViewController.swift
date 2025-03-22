@@ -146,8 +146,11 @@ extension ViewController: CountriesLoaderDelegate {
     
     func didFetch(_ country: Country) {
         if !countries.contains(country) {
-            countries.append(country)
+            print(countriesManager.order)
+            countriesManager.add(country: country)
             if let id = countriesManager.countries.firstIndex(of: country) {
+                print("inserting at id \(id)")
+                print(countries.map({ $0.name }))
                 tableView.insertRows(at: [IndexPath(row: id, section: 0)], with: .automatic)
             } else {
                 tableView.reloadData()
@@ -170,7 +173,11 @@ extension ViewController: UITableViewDelegate {
             assertionFailure("Failed to create detailVC or get Navigation controller")
             return
         }
-        var country = countries[indexPath.row]
+        print(countriesManager.order)
+        print(countriesManager.countries.map({ $0.name }))
+        print(indexPath.row)
+        var country = countriesManager.countries[indexPath.row]
+        print(country.name)
         if let imageData = country.imageData {
             let image = UIImage(data: imageData)!
             let viewModel = CountryDetailViewModel(name: country.name, image: image, briefDescription: country.briefDescription, description: country.description, location: country.location)
@@ -199,7 +206,10 @@ extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         guard editingStyle == .delete else { return }
-        countries.remove(at: indexPath.row)
+        print(indexPath.row)
+        print(countries.count)
+        let removedCountry = countries[indexPath.row]
+        countriesManager.remove(country: removedCountry)
         tableView.deleteRows(at: [indexPath], with: .automatic)
     }
 

@@ -63,41 +63,27 @@ class ViewController: UIViewController {
     private func setupNavigationBar() {
         title = "Countries"
         navigationController?.navigationBar.prefersLargeTitles = true
-        setupAddButton()
-        setupSortingMenu()
+        navigationItem.setRightBarButtonItems([setupAddButton(), setupSortingMenu()], animated: false)    }
+    
+    private func setupSortingMenu() -> UIBarButtonItem{
+        let sortingActions = Sorting.allCases.map { sorting in
+            var image: UIImage? = nil
+            let imageName = countriesManager.ascendingOrder ? "arrow.up" : "arrow.down"
+            if sorting == countriesManager.sorting { image = UIImage(systemName: imageName)}
+            return UIAction(title: sorting.rawValue, image: image, identifier: .init(sorting.rawValue)) { [weak self] action in
+                guard let self else { return }
+                self.countriesManager.ascendingOrder.toggle()
+                self.countriesManager.sorting = sorting
+                self.setupNavigationBar()
+                self.tableView.reloadData()
+            }
+        }
+        let menu = UIMenu(title: "Sort by", identifier: .init("Sorting"), options: [.singleSelection], children: sortingActions)
+        return UIBarButtonItem(title: "Sorting", image: UIImage(systemName: "arrow.up.arrow.down"), primaryAction: nil, menu: menu)
     }
     
-    private func setupSortingMenu() {
-        let sortingMenus = Sorting.allCases.map { sorting in
-            UIMenu(title: sorting.rawValue, options: [.singleSelection], children: [
-                UIAction(title: "Ascending", image: UIImage(systemName: "arrow.up.circle")) { [weak self] _ in
-                    self?.countriesManager.ascendingOrder = true
-                    self?.countriesManager.sorting = sorting
-                    self?.tableView.reloadData()
-                },
-                UIAction(title: "Descending", image: UIImage(systemName: "arrow.down.circle")) { [weak self] _ in
-                    self?.countriesManager.ascendingOrder = false
-                    self?.countriesManager.sorting = sorting
-                    self?.tableView.reloadData()
-                }
-            ])
-        }
-        let menu = UIMenu(title: "Sort by", options: [.singleSelection], children: sortingMenus)
-        let item = UIBarButtonItem(title: "Sorting", image: UIImage(systemName: "arrow.up.arrow.down"), primaryAction: nil, menu: menu)
-        if navigationItem.rightBarButtonItems != nil {
-            navigationItem.rightBarButtonItems?.append(item)
-        } else {
-            navigationItem.rightBarButtonItems = [item]
-        }
-    }
-    
-    private func setupAddButton() {
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(Self.addCountry))
-        if navigationItem.rightBarButtonItems != nil {
-            navigationItem.rightBarButtonItems?.append(addButton)
-        } else {
-            navigationItem.rightBarButtonItems = [addButton]
-        }
+    private func setupAddButton() -> UIBarButtonItem{
+        return UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(Self.addCountry))
     }
     
     private func configCell(_ cell: CountryCell, at indexPath: IndexPath) {
@@ -145,17 +131,13 @@ extension ViewController: CountriesLoaderDelegate {
     
     func didFetch(_ country: Country) {
         if !countries.contains(country) {
-            print(countriesManager.ascendingOrder)
             countriesManager.add(country: country)
             if let id = countriesManager.countries.firstIndex(of: country) {
-                print("inserting at id \(id)")
-                print(countries.map({ $0.name }))
                 tableView.insertRows(at: [IndexPath(row: id, section: 0)], with: .automatic)
             } else {
                 tableView.reloadData()
             }
         }
-        print(countries.map({ $0.name }))
     }
     
     func failedToFetch(_ country: String) {
@@ -174,11 +156,7 @@ extension ViewController: UITableViewDelegate {
             assertionFailure("Failed to create detailVC or get Navigation controller")
             return
         }
-        print(countriesManager.ascendingOrder)
-        print(countries.map({ $0.name }))
-        print(indexPath.row)
         var country = countries[indexPath.row]
-        print(country.name)
         if let imageData = country.imageData {
             let image = UIImage(data: imageData)!
             let viewModel = CountryDetailViewModel(name: country.name, image: image, briefDescription: country.briefDescription, description: country.description, location: country.location)
@@ -207,8 +185,6 @@ extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         guard editingStyle == .delete else { return }
-        print(indexPath.row)
-        print(countries.count)
         let removedCountry = countries[indexPath.row]
         countriesManager.remove(country: removedCountry)
         tableView.deleteRows(at: [indexPath], with: .automatic)

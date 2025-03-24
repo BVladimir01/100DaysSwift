@@ -7,14 +7,15 @@
 
 import UIKit
 
-struct Country: Decodable, Identifiable, Encodable, Hashable {
+struct Country: Identifiable, Hashable {
+    
+    //MARK: Internal Properties
     
     var id: String {
         get {
             name
         }
     }
-    
     let name: String
     let imageInfo: ImageInfo
     var imageData: Data? = nil
@@ -23,6 +24,25 @@ struct Country: Decodable, Identifiable, Encodable, Hashable {
     let briefDescription: String
     let location: Location
     let description: String
+    
+    //MARK: - Inintializers
+    
+    init(name: String, imageInfo: ImageInfo, imageData: Data? = nil, thumbnailInfo: ImageInfo, thumbnailData: Data? = nil, briefDescription: String, location: Location, description: String) {
+        self.name = name
+        self.imageInfo = imageInfo
+        self.imageData = imageData
+        self.thumbnailInfo = thumbnailInfo
+        self.thumbnailData = thumbnailData
+        self.briefDescription = briefDescription
+        self.location = location
+        self.description = description
+    }
+    
+}
+
+
+//MARK: - Codable
+extension Country: Codable {
     
     enum CodingKeys: String, CodingKey {
         case name = "title"
@@ -34,17 +54,6 @@ struct Country: Decodable, Identifiable, Encodable, Hashable {
         case description = "extract"
         case location
         case coordinates
-    }
-    
-    init(name: String, imageInfo: ImageInfo, imageData: Data? = nil, thumbnailInfo: ImageInfo, thumbnailData: Data? = nil, briefDescription: String, location: Location, description: String) {
-        self.name = name
-        self.imageInfo = imageInfo
-        self.imageData = imageData
-        self.thumbnailInfo = thumbnailInfo
-        self.thumbnailData = thumbnailData
-        self.briefDescription = briefDescription
-        self.location = location
-        self.description = description
     }
     
     init(from decoder: any Decoder) throws {
@@ -81,6 +90,7 @@ struct Country: Decodable, Identifiable, Encodable, Hashable {
 }
 
 
+//MARK: - Equatable
 extension Country: Equatable {
     static func == (lhs: Country, rhs: Country) -> Bool {
         lhs.name == rhs.name
@@ -88,6 +98,7 @@ extension Country: Equatable {
 }
 
 
+//MARK: - Location
 struct Location: Codable, Hashable, Comparable {
     let lat: Double
     let lon: Double
@@ -101,6 +112,8 @@ struct Location: Codable, Hashable, Comparable {
     }
 }
 
+
+//MARK: - ImageInfo
 struct ImageInfo: Codable, Hashable {
     let source: String
     let width: Int
@@ -108,6 +121,7 @@ struct ImageInfo: Codable, Hashable {
 }
 
 
+//MARK: - Decoding Error
 enum DecodingError: Error {
     case locationError
 }

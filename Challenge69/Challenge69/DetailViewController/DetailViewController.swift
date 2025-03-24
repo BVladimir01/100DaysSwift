@@ -7,26 +7,33 @@
 
 import UIKit
 
+
 class DetailViewController: UIViewController {
     
-    static let StoryboardID = "CountryDetailVC"
+    // MARK: - IBOutlets
     
     @IBOutlet var countryImageView: UIImageView!
     @IBOutlet var briefDescriptionLabel: UILabel!
     @IBOutlet var descriptionTextView: UITextView!
     @IBOutlet var locationLabel: UILabel!
     
+    // MARK: - Internal Properties
+    static let StoryboardID = "CountryDetailVC"
     var viewModel: CountryDetailViewModel? {
         didSet {
             configure()
         }
     }
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
         configure()
     }
+    
+    // MARK: - Private Methods
     
     private func configure() {
         guard let viewModel, self.isViewLoaded else { return }

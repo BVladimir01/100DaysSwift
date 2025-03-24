@@ -7,16 +7,32 @@
 
 import UIKit
 
-class CountriesManager {
-    private let store = CountriesStore.shared
+
+// MARK: - Sorting
+enum Sorting: String, CaseIterable, Codable {
+    case date = "adding date", name, location
+}
+
+
+//MARK: CountriesManagerProtocol
+protocol CountriesManagerProtocol: AnyObject {
     
-    var sorting: Sorting = .date {
+    var sorting: Sorting { get set }
+    var ascendingOrder: Bool { get set }
+    var countries: [Country] { get }
+    
+    func remove(country: Country)
+    func add(country: Country)
+    func modify(country: Country)
+}
+
+class CountriesManager: CountriesManagerProtocol {
+    
+    // MARK: - Internal Properties
+    var sorting: Sorting = .date
+    var ascendingOrder = true {
         didSet { save() }
     }
-    var order: Order = .ascending {
-        didSet { save() }
-    }
-    
     var countries: [Country] {
         get {
             var res: [Country]
@@ -32,7 +48,7 @@ class CountriesManager {
                     arg1.location < arg2.location
                 })
             }
-            if order == .ascending {
+            if ascendingOrder {
                 return res
             } else {
                 return res.reversed()
@@ -40,52 +56,30 @@ class CountriesManager {
         }
     }
     
-    var sortingCases = Sorting.allCases
+    // MARK: - Private Properties
     
-    enum Sorting: String, CaseIterable, Codable {
-        case date = "adding date", name, location
-    }
+    private let store = CountriesStore.shared
+    private let storage = UserDefaults.standard
     
     enum Order: Codable {
         case ascending, descending
     }
     
-    private func save() {
-        let encoder = JSONEncoder()
-        do {
-            let sortingData = try encoder.encode(sorting)
-            let orderData = try encoder.encode(order)
-            storage.set(sortingData, forKey: StorageKeys.sorting)
-            storage.set(orderData, forKey: StorageKeys.order)
-        } catch {
-            print(error)
-        }
-    }
+    // MARK: - Private Types
     
-    private func load() {
-        let decoder = JSONDecoder()
-        if let sortingData = storage.data(forKey: StorageKeys.sorting), let orderData = storage.data(forKey: StorageKeys.order) {
-            do {
-                let sorting = try decoder.decode(Sorting.self, from: sortingData)
-                let order = try decoder.decode(Order.self, from: orderData)
-                self.sorting = sorting
-                self.order = order
-            } catch {
-                print(error)
-            }
-        }
-    }
-    
-    private let storage = UserDefaults.standard
     private struct StorageKeys {
         private init() { }
         static let sorting = "sortingKey"
         static let order = "orderKey"
     }
     
+    // MARK: - Initializers
+    
     init() {
         load()
     }
+    
+    //MARK: - Internal Methods
     
     func remove(country: Country) {
         if let id = store.countries.firstIndex(of: country) {
@@ -102,4 +96,31 @@ class CountriesManager {
             store.countries[id] = country
         }
     }
+    
+    // MARK: - Private Methods
+    
+    private func save() {
+        let encoder = JSONEncoder()
+        storage.set(ascendingOrder, forKey: StorageKeys.order)
+        do {
+            let sortingData = try encoder.encode(sorting)
+            storage.set(sortingData, forKey: StorageKeys.sorting)
+        } catch {
+            print(error)
+        }
+    }
+    
+    private func load() {
+        let decoder = JSONDecoder()
+        self.ascendingOrder = storage.bool(forKey: StorageKeys.order)
+        if let sortingData = storage.data(forKey: StorageKeys.sorting) {
+            do {
+                let sorting = try decoder.decode(Sorting.self, from: sortingData)
+                self.sorting = sorting
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
 }

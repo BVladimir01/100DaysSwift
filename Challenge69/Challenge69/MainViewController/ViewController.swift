@@ -10,25 +10,23 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    // MARK: - IBOutlets
+    
     @IBOutlet private var tableView: UITableView!
     
+    // MARK: - Private Properties
+    
     private let showDetailSegueID = "ShowDetail"
-    
-    private let countriesLoader = CountriesLoader()
-    
-    private let countriesManager = CountriesManager()
-    
+    private let countriesLoader: CountriesLoaderProtocol = CountriesLoader()
+    private let countriesManager: CountriesManagerProtocol = CountriesManager()
     private var countries: [Country] {
         get {
             countriesManager.countries
         }
     }
-    
-    private var sorting: Sorting = .default
-    
     private var sortedCountries: [Country] {
-        switch sorting {
-        case .default:
+        switch countriesManager.sorting {
+        case .date:
             return countries
         case .name:
             return countries.sorted(using: SortDescriptor(\.name, comparator: .lexical))
@@ -45,6 +43,7 @@ class ViewController: UIViewController {
         }
     }
     
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +51,8 @@ class ViewController: UIViewController {
         setupTableView()
         setupNavigationBar()
     }
+    
+    // MARK: - Private Methods
     
     private func setupTableView() {
         tableView.delegate = self
@@ -67,15 +68,15 @@ class ViewController: UIViewController {
     }
     
     private func setupSortingMenu() {
-        let sortingMenus = countriesManager.sortingCases.map { sorting in
+        let sortingMenus = Sorting.allCases.map { sorting in
             UIMenu(title: sorting.rawValue, options: [.singleSelection], children: [
                 UIAction(title: "Ascending", image: UIImage(systemName: "arrow.up.circle")) { [weak self] _ in
-                    self?.countriesManager.order = .ascending
+                    self?.countriesManager.ascendingOrder = true
                     self?.countriesManager.sorting = sorting
                     self?.tableView.reloadData()
                 },
                 UIAction(title: "Descending", image: UIImage(systemName: "arrow.down.circle")) { [weak self] _ in
-                    self?.countriesManager.order = .descending
+                    self?.countriesManager.ascendingOrder = false
                     self?.countriesManager.sorting = sorting
                     self?.tableView.reloadData()
                 }
@@ -139,11 +140,12 @@ class ViewController: UIViewController {
 }
 
 
+// MARK: - CountriesLoaderDelegate
 extension ViewController: CountriesLoaderDelegate {
     
     func didFetch(_ country: Country) {
         if !countries.contains(country) {
-            print(countriesManager.order)
+            print(countriesManager.ascendingOrder)
             countriesManager.add(country: country)
             if let id = countriesManager.countries.firstIndex(of: country) {
                 print("inserting at id \(id)")
@@ -164,6 +166,7 @@ extension ViewController: CountriesLoaderDelegate {
 }
 
 
+// MARK: - UITableViewDelegate
 extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -171,7 +174,7 @@ extension ViewController: UITableViewDelegate {
             assertionFailure("Failed to create detailVC or get Navigation controller")
             return
         }
-        print(countriesManager.order)
+        print(countriesManager.ascendingOrder)
         print(countries.map({ $0.name }))
         print(indexPath.row)
         var country = countries[indexPath.row]
@@ -214,6 +217,7 @@ extension ViewController: UITableViewDelegate {
 }
 
 
+// MARK: - UITableViewDataSource
 extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -228,9 +232,4 @@ extension ViewController: UITableViewDataSource {
         return cell
     }
     
-}
-
-
-enum Sorting: String {
-    case `default`, name, location
 }

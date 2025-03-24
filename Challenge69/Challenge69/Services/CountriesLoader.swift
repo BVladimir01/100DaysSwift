@@ -8,19 +8,29 @@
 import Foundation
 
 
-protocol CountriesLoaderProtocol {
+protocol CountriesLoaderProtocol: AnyObject {
+    var delegate: CountriesLoaderDelegate? { get set }
     func fetchCountry(_ name: String)
 }
+
 
 protocol CountriesLoaderDelegate: AnyObject {
     func didFetch(_ country: Country)
     func failedToFetch(_ country: String)
 }
 
+
 class CountriesLoader: CountriesLoaderProtocol {
     
+    // MARK: - Internal Properties
+    
     weak var delegate: CountriesLoaderDelegate?
+    
+    // MARK: - Private Properties
+    
     private let baseURLString = "https://en.wikipedia.org/api/rest_v1/page/summary/"
+    
+    // MARK: - Interntal Methods
     
     func fetchCountry(_ name: String) {
         guard let url = URL(string: baseURLString + name) else { return }

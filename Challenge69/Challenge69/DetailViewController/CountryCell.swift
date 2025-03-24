@@ -7,9 +7,12 @@
 
 import UIKit
 
+
 class CountryCell: UITableViewCell {
     
-    @IBOutlet var countryImageView: UIImageView! {
+    // MARK: - IBOutlets
+    
+    @IBOutlet private var countryImageView: UIImageView! {
         didSet {
             if countryImageView.image != nil {
                 activityIndicator.stopAnimating()
@@ -22,7 +25,11 @@ class CountryCell: UITableViewCell {
     @IBOutlet private var descriptionLabel: UILabel!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     
+    // MARK: - Internal Properties
+    
     static let reuseID = "CountryCell"
+    
+    // MARK: - Lifecycle
     
     override func prepareForReuse() {
         nameLabel.text = nil
@@ -30,6 +37,8 @@ class CountryCell: UITableViewCell {
         countryImageView.image = nil
     }
 
+    // MARK: - Intental Methods
+    
     func configure(with viewModel: CountryViewModel) {
         nameLabel.text = viewModel.name
         descriptionLabel.text = viewModel.description

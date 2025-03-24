@@ -7,21 +7,45 @@
 
 import Foundation
 
-class CountriesStore {
+
+//MARK: - CountriesStoreProtocol
+protocol CountriesStoreProtocol {
+    var countries: [Country] { get set }
+}
+
+
+//MARK: - CountriesStore
+class CountriesStore: CountriesStoreProtocol {
     
+    // MARK: Internal Properties
+    
+    static let shared = CountriesStore()
     var countries: [Country] = [] {
-        didSet {
-            store()
-            print("Stored")
-        }
+        didSet { store() }
     }
+    
+    // MARK: - Private Properties
     
     private let storageKey: String = "Countries"
     private let storage = UserDefaults.standard
     
-    static let shared = CountriesStore()
+    // MARK: - Initializers
     
     private init() {
+        load()
+    }
+    
+    // MARK: - Private Methods
+    
+    private func store() {
+        guard let encodedCountries = try? JSONEncoder().encode(countries) else {
+            print("failed to encode and store countries")
+            return
+        }
+        storage.set(encodedCountries, forKey: storageKey)
+    }
+    
+    private func load() {
         guard let countriesData = storage.data(forKey: storageKey) else {
             print("failed to get data from storage")
             return
@@ -33,13 +57,5 @@ class CountriesStore {
             print(error)
             print("----------------")
         }
-    }
-    
-    private func store() {
-        guard let encodedCountries = try? JSONEncoder().encode(countries) else {
-            print("failed to encode and store countries")
-            return
-        }
-        storage.set(encodedCountries, forKey: storageKey)
     }
 }

@@ -65,7 +65,7 @@ class ViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.setRightBarButtonItems([setupAddButton(), setupSortingMenu()], animated: false)    }
     
-    private func setupSortingMenu() -> UIBarButtonItem{
+    private func setupSortingMenu() -> UIBarButtonItem {
         let sortingActions = Sorting.allCases.map { sorting in
             var image: UIImage? = nil
             let imageName = countriesManager.ascendingOrder ? "arrow.up" : "arrow.down"
@@ -82,7 +82,7 @@ class ViewController: UIViewController {
         return UIBarButtonItem(title: "Sorting", image: UIImage(systemName: "arrow.up.arrow.down"), primaryAction: nil, menu: menu)
     }
     
-    private func setupAddButton() -> UIBarButtonItem{
+    private func setupAddButton() -> UIBarButtonItem {
         return UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(Self.addCountry))
     }
     
@@ -158,12 +158,20 @@ extension ViewController: UITableViewDelegate {
         }
         var country = countries[indexPath.row]
         if let imageData = country.imageData {
+            imageDataSaved(imageData)
+        } else {
+            loadImageData()
+        }
+        
+        func imageDataSaved(_ imageData: Data) {
             let image = UIImage(data: imageData)!
             let viewModel = CountryDetailViewModel(name: country.name, image: image, briefDescription: country.briefDescription, description: country.description, location: country.location)
             detailVC.viewModel = viewModel
             tableView.deselectRow(at: indexPath, animated: true)
             navigationController.pushViewController(detailVC, animated: true)
-        } else {
+        }
+        
+        func loadImageData() {
             let reqest = URLRequest(url: URL(string: country.imageInfo.source)!)
             let task = URLSession.shared.data(for: reqest) { [weak self] result in
                 switch result {
